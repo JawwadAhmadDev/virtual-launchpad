@@ -121,7 +121,7 @@ contract LaunchpadV2 is Ownable, Pausable {
     uint256 public raisedAmount; // 1 running, 2 cancel
     address public signer;
     uint256 public constant ZOOM = 10_000;
-    uint256 public penaltyFee = 1000; // 10%
+    uint256 public penaltyFee = 1000;
 
     // dex
     bool public manualListing;
