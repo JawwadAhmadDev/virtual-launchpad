@@ -24,4 +24,5 @@ A Soft Cap is a minimum amount of collected investment that is sufficient for co
 [hard_cap](https://www.bitdegree.org/crypto/learn/crypto-terms/what-is-hard-cap)
 
 
-# Anti-Bot Mechanism: Anti-Bot System: With this option you can control who can contribute to the pool. Only Users who hold a minimum amount of token you suggest would be able to contribute
+# Anti-Bot Mechanism: 
+Anti-Bot System: With this option you can control who can contribute to the pool. Only Users who hold a minimum amount of token you suggest would be able to contribute
