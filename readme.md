@@ -22,3 +22,6 @@ A Soft Cap is a minimum amount of collected investment that is sufficient for co
 [explanation_from_medium](https://medium.com/@Priority_Token/the-basics-setting-a-soft-cap-hard-cap-for-your-ico-sto-a43372827402#:~:text=A%20Soft%20Cap%20is%20a,project%20is%20ready%20to%20accept.)
 [soft_cap](https://www.bitdegree.org/crypto/learn/crypto-terms/what-is-soft-cap)
 [hard_cap](https://www.bitdegree.org/crypto/learn/crypto-terms/what-is-hard-cap)
+
+
+# Anti-Bot Mechanism: Anti-Bot System: With this option you can control who can contribute to the pool. Only Users who hold a minimum amount of token you suggest would be able to contribute
