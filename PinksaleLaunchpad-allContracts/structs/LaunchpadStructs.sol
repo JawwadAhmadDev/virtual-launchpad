@@ -32,7 +32,7 @@ library LaunchpadStructs {
                             // false -> autoListing (after end of launchpad liquidity will be added automatically at the time of finalizing the launchpad.)
         address routerAddress; // router address of DEX in case of auto listing
         address factoryAddress; // factory address in case of auto listing
-        uint256 listingPrice; // how much tokens will be added for liquidity against feeToken in case of auto listing
+        uint256 listingPrice; // how much tokens will be added for liquidity against one feeToken in case of auto listing
         uint256 listingPercent;// 1=> 10000 (how much percentage of raised feeTokens will be added for liquidity in case of auto listing)
         uint256 lpLockTime; // how much time liquidity will be locked. time will be taken in the form of days.
     }
@@ -54,7 +54,7 @@ library LaunchpadStructs {
                                 // for further detail of anti-bot mechanism see the comments of launchpadInfo structure.
     }
 
-    struct OwnerZoneInfo { // this structure is desgined to show information to owner
+    struct OwnerZoneInfo { // this structure is designed to show owner's informations
         bool isOwner; // caller is owner or not
         uint256 whitelistPool; // whether pool is public / whitelisted / anti-bot (0 / 1 / 2 respectively)
         bool canFinalize; // owner can finalized the launchpad or not at this stage.
@@ -73,8 +73,8 @@ library LaunchpadStructs {
         address deployer;
         address signer;
         address superAccount; //BNB With Raised Amount
-        address payable fundAddress;
-        address gsLock;
+        address payable fundAddress; // address which will receive all kind of collected BNB or tokens.
+        address gsLock; // contract address implementing lock mechanism
     }
 
     struct TeamVestingInfo {
