@@ -86,13 +86,14 @@ library LaunchpadStructs {
     }
 
     struct CalculateTokenInput {
-        address feeToken;
-        uint256 presaleRate;
-        uint256 hardCap;
-        uint256 raisedTokenFeePercent;
-        uint256 raisedFeePercent;
-        uint256 listingPercent;
-        uint256 listingPrice;
+        address feeToken; // against which token presale is created. i.e. against BNB or BUSD or any other ERC20 token.
+        uint256 presaleRate; // how much icotokens will be equal to 1 fee Token. i.e. 1 BNB = 100 BL Tokens
+        uint256 hardCap; // maximum how much BNB or Fee tokens we want from presale.
+        uint256 raisedTokenFeePercent; // in case of feetoken is BUSD or any other ERC20token, how much fee will be deducted from raised BUSD or other ERC20Token 
+        uint256 raisedFeePercent; // in case of feeToken is BNB, how much percent will be deducted from raised BNBs and will be transfered to the system. 
+        uint256 listingPercent; // in case of autolisting, how much liquidity of raised BNB or Fee tokens will be added.
+        uint256 listingPrice; // how much ico tokens will be equal to 1 fee token at the time of liqudity. 
+                              // in other words, how much liquidity of icoTokens will be added against 1 feeToken. i.e. 1 BNB = 50 Bl Tokens
 
     }
 }
