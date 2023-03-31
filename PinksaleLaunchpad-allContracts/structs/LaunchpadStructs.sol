@@ -21,7 +21,7 @@ library LaunchpadStructs {
     struct ClaimInfo {
         uint256 cliffVesting; //First gap release after listing (minutes)
         uint256 lockAfterCliffVesting; //second gap release after cliff (minutes)
-        uint256 firstReleasePercent; // percent of tokens to be released after cliffVesting.
+        uint256 firstReleasePercent; // percent of tokens to be released first time.
         uint256 vestingPeriodEachCycle; // time of each cycle after first release
         uint256 tokenReleaseEachCycle; // percentage of tokens to be released on completion of each cycle.
     }
@@ -78,11 +78,11 @@ library LaunchpadStructs {
     }
 
     struct TeamVestingInfo {
-        uint256 teamTotalVestingTokens;
+        uint256 teamTotalVestingTokens; // how much tokens are being invested in presale
         uint256 teamCliffVesting; //First token release after listing (minutes)
-        uint256 teamFirstReleasePercent;
-        uint256 teamVestingPeriodEachCycle;
-        uint256 teamTokenReleaseEachCycle;
+        uint256 teamFirstReleasePercent; // how much percentage of tokens will be released first time.
+        uint256 teamVestingPeriodEachCycle; // tokens release time limit for each cycle after first time.
+        uint256 teamTokenReleaseEachCycle; // percentage of tokens to be released in each cycle.
     }
 
     struct CalculateTokenInput {
@@ -94,7 +94,6 @@ library LaunchpadStructs {
         uint256 listingPercent; // in case of autolisting, how much liquidity of raised BNB or Fee tokens will be added.
         uint256 listingPrice; // how much ico tokens will be equal to 1 fee token at the time of liqudity. 
                               // in other words, how much liquidity of icoTokens will be added against 1 feeToken. i.e. 1 BNB = 50 Bl Tokens
-
     }
 }
 
