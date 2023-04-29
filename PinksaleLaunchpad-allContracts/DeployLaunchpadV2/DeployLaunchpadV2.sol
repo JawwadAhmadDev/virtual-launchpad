@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.2;
+pragma solidity ^0.8.17;
 
 //import "@openzeppelin/contracts/access/Ownable.sol";
 //import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -14,22 +14,22 @@ contract DeployLaunchpadV2 is Ownable {
 
     address public signer;
     address public superAccount;
-    address public gsLock;
+    address public virtualLock;
     address payable public fundAddress;
 
     event NewLaunchpadV2(address indexed launchpad);
 
     uint256 public constant ZOOM = 10000;
 
-    constructor(address _signer, address _superAccount, address _gsLock, address payable _fundAddress){
+    constructor(address _signer, address _superAccount, address _virtualLock, address payable _fundAddress){
         require(_signer != address(0) && _signer != address(this), 'signer');
-        require(_gsLock != address(0) && _gsLock != address(this), 'gsLock');
+        require(_gsLock != address(0) && _gsLock != address(this), 'virtualLock');
         require(_superAccount != address(0) && _superAccount != address(this), 'superAccount');
         require(_fundAddress != address(0) && _fundAddress != address(this), 'fundAddress');
         signer = _signer;
         superAccount = _superAccount;
         fundAddress = _fundAddress;
-        gsLock = _gsLock;
+        virtualLock = _virtualLock;
     }
 
     function setSigner(address _signer) public onlyOwner {
@@ -41,7 +41,7 @@ contract DeployLaunchpadV2 is Ownable {
     }
 
     function setGSLock(address _gsLock) public onlyOwner {
-        gsLock = _gsLock;
+        virtualLock = _gsLock;
     }
 
     function setFundAddress(address payable _fundAddress) public onlyOwner {
@@ -80,7 +80,7 @@ contract DeployLaunchpadV2 is Ownable {
             signer,
             superAccount,
             payable(fundAddress),
-            gsLock
+            virtualLock
         );
 
 

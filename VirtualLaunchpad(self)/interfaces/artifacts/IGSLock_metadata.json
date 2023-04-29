@@ -1,0 +1,244 @@
+{
+	"compiler": {
+		"version": "0.8.19+commit.7dd6d404"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "lockId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "newAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "newUnlockDate",
+						"type": "uint256"
+					}
+				],
+				"name": "editLock",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "isLpToken",
+						"type": "bool"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "unlockDate",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
+					}
+				],
+				"name": "lock",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "lockId",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address[]",
+						"name": "owners",
+						"type": "address[]"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "amounts",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "isLpToken",
+						"type": "bool"
+					},
+					{
+						"internalType": "uint256",
+						"name": "tgeDate",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "tgeBps",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "cycle",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "cycleBps",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
+					}
+				],
+				"name": "multipleVestingLock",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "",
+						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "lockId",
+						"type": "uint256"
+					}
+				],
+				"name": "unlock",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "isLpToken",
+						"type": "bool"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "tgeDate",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "tgeBps",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "cycle",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "cycleBps",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
+					}
+				],
+				"name": "vestingLock",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "lockId",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "payable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"interfaces/IVirtualLock.sol": "IGSLock"
+		},
+		"evmVersion": "paris",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"interfaces/IVirtualLock.sol": {
+			"keccak256": "0x32a73c6c413bca0510f1f8dca7284ba89e84093c6eae8d5837610c92055c76d7",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6406437585213668b3ef7d23e9d7398e94e11f94e4be4500e1c25566c5dca6ff",
+				"dweb:/ipfs/QmR3WknU3jYxmXUXpB8hrwugpUwEzLVsTifbCRrUmo1iNg"
+			]
+		}
+	},
+	"version": 1
+}

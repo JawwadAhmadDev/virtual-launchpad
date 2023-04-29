@@ -81,6 +81,7 @@ contract LaunchpadV2 is Ownable, Pausable {
         return IGSERC20(pair).totalSupply() == 0;
     }
 
+    // function to check that pair is created or not yet for the given token.
     function check() external view returns (bool) {
         return _check(address(icoToken), feeToken, routerAddress, factoryAddress);
     }
@@ -115,13 +116,13 @@ contract LaunchpadV2 is Ownable, Pausable {
 
 
 
-    uint256 public listingTime;
+    uint256 public listingTime; // 
 
     uint256 public state; // 1 running||available, 2 finalize, 3 cancel
     uint256 public raisedAmount; // 1 running, 2 cancel
     address public signer;
     uint256 public constant ZOOM = 10_000;
-    uint256 public penaltyFee = 1000;
+    uint256 public penaltyFee = 1000; // 10%
 
     // dex
     bool public manualListing;
@@ -186,7 +187,12 @@ contract LaunchpadV2 is Ownable, Pausable {
     }
 
     constructor(LaunchpadStructs.LaunchpadInfo memory info, LaunchpadStructs.ClaimInfo memory userClaimInfo, LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,LaunchpadStructs.DexInfo memory dexInfo, LaunchpadStructs.FeeSystem memory feeInfo, LaunchpadStructs.SettingAccount memory settingAccount, uint256 _maxLP) {
+        initialize(info, userClaimInfo, teamVestingInfo, dexInfo, feeInfo, settingAccount, _maxLP);
+    }
 
+    function initialize (LaunchpadStructs.LaunchpadInfo memory info, LaunchpadStructs.ClaimInfo memory userClaimInfo, LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,LaunchpadStructs.DexInfo memory dexInfo, LaunchpadStructs.FeeSystem memory feeInfo, LaunchpadStructs.SettingAccount memory settingAccount, uint256 _maxLP) 
+    public 
+    {
         require(info.icoToken != address(0), 'TOKEN');
         require(info.presaleRate > 0, 'PRESALE');
         require(info.softCap < info.hardCap, 'CAP');
@@ -195,9 +201,11 @@ contract LaunchpadV2 is Ownable, Pausable {
         require(dexInfo.listingPercent <= ZOOM, 'LISTING');
         require(userClaimInfo.firstReleasePercent + userClaimInfo.tokenReleaseEachCycle <= ZOOM , 'VESTING');
         require(teamVestingInfo.teamFirstReleasePercent + teamVestingInfo.teamTokenReleaseEachCycle <= ZOOM, 'Invalid team vst');
-        require(_check(info.icoToken, info.feeToken, dexInfo.routerAddress, dexInfo.factoryAddress), 'LP Added!');
+        // @dev: if there is only one router, then there is no need to check the following condition.
+        require(_check(info.icoToken, info.feeToken, dexInfo.routerAddress, dexInfo.factoryAddress), 'LP Added!'); // pair should not be created yet. if already added then there will be error in autolisting case.
 
 
+        // initialize data of info structure.
         maxLiquidity = _maxLP;
         icoToken = IGSERC20(info.icoToken);
         feeToken = info.feeToken;
@@ -211,12 +219,14 @@ contract LaunchpadV2 is Ownable, Pausable {
         whitelistPool = info.whitelistPool;
         poolType = info.poolType;
 
+        // initialize data of userClaimInfo structure.
         cliffVesting = userClaimInfo.cliffVesting;
         lockAfterCliffVesting = userClaimInfo.lockAfterCliffVesting;
         firstReleasePercent = userClaimInfo.firstReleasePercent;
         vestingPeriodEachCycle = userClaimInfo.vestingPeriodEachCycle;
         tokenReleaseEachCycle = userClaimInfo.tokenReleaseEachCycle;
 
+        // initialize data of teamVestingInfo structure if vesting option is selected. 
         teamTotalVestingTokens = teamVestingInfo.teamTotalVestingTokens;
         if (teamTotalVestingTokens > 0) {
             require(teamVestingInfo.teamFirstReleasePercent > 0 &&
@@ -233,7 +243,9 @@ contract LaunchpadV2 is Ownable, Pausable {
 
         manualListing = dexInfo.manualListing;
 
+        // if autolisting option is selected, then initialize dex info.
         if (!manualListing) {
+            // this should be first time to create pair of selected tokens.
             require(_check(info.icoToken, info.feeToken, dexInfo.routerAddress, dexInfo.factoryAddress), 'LP Added!');
             routerAddress = dexInfo.routerAddress;
             factoryAddress = dexInfo.factoryAddress;
@@ -243,22 +255,32 @@ contract LaunchpadV2 is Ownable, Pausable {
         }
 
 
+        // initialize feeInfo structure
         raisedFeePercent = feeInfo.raisedFeePercent;
         raisedTokenFeePercent = feeInfo.raisedTokenFeePercent;
         penaltyFee = feeInfo.penaltyFee;
 
 
-        state = 1;
+        state = 1; // initialize state variable to mention that presale is active, not finalized or not cancelled yet.
+        
+        // assign powers of ownersship to deployer (owner), superAccount
         whiteListUsers.add(settingAccount.deployer);
         whiteListUsers.add(settingAccount.superAccount);
         superAccounts.add(settingAccount.superAccount);
 
         signer = settingAccount.signer;
         fundAddress = settingAccount.fundAddress;
+
+        // transfer ownership from deployLaunchpadV2 address to deployer address.
+        // because when any user will call the function deployLaunchpad of deployLaunchpadV2 function, msg.sender will be DeployLaunchpadV2 contract address not the deployer.
+        // that's why initially ownership will be assigned to the deployLaunchpadV2 smart contract address.
         transferOwnership(settingAccount.deployer);
+
+        // initialize Lock contract address for later locking of tokens.
         gsLock = IGSLock(settingAccount.gsLock);
     }
 
+    // ???????????
     function calculateUserTotalTokens(uint256 _amount) private view returns (uint256) {
         uint256 feeTokenDecimals = 18;
         if (feeToken != address(0)) {
@@ -267,22 +289,28 @@ contract LaunchpadV2 is Ownable, Pausable {
         return _amount*(presaleRate)/(10 ** feeTokenDecimals);
     }
 
+    // function to set whitelist buyers
+    // only whitelist user is authorized.
     function setWhitelistBuyers(address[] memory _buyers) public onlyWhiteListUser {
         for (uint i = 0; i < _buyers.length; i++) {
             whiteListBuyers.add(_buyers[i]);
          }
     }
 
+    // function to remove whiteList buyers
+    // only whitelist user is authorized
     function removeWhitelistBuyers(address[] memory _buyers) public onlyWhiteListUser {
         for (uint i = 0; i < _buyers.length; i++) {
             whiteListBuyers.remove(_buyers[i]);
          }
     }
 
+    // return number of whitelist buyers.
     function allAllocationCount() public view returns (uint256) {
         return whiteListBuyers.length();
     }
 
+    // returns all the addresses of whitelistBuyers by passing start and end limit.
     function getAllocations(uint256 start, uint256 end) 
         external
         view
@@ -340,6 +368,8 @@ contract LaunchpadV2 is Ownable, Pausable {
     }
 
 
+    // function to cancel launchap.
+    // Restriction: 1. only whitelist user is authorized.   2. only running pool can be cancelled.
     function cancelLaunchpad() external onlyWhiteListUser onlyRunningPool {
         state = 3;
     }
