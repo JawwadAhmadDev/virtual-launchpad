@@ -9,6 +9,8 @@ import "../interfaces/ILaunchpad.sol";
 import "../interfaces/IVirtualERC20.sol";
 
 contract LaunchpadFactory is Ownable {
+    uint256 public constant ZOOM = 10000;
+
     uint256 public flatfee; // fee that will be calculated on each launchpad creation
     // address public signer;
     address public superAccount;
@@ -17,10 +19,9 @@ contract LaunchpadFactory is Ownable {
     address public implementation; // implementation of the launchpad. This will be used to clone the launchpad
 
     ILaunchpad[] public allLaunchpads; // array that will store all launchpads created yet.
+    mapping (address => ILaunchpad[]) private allLaunchpadsOf; // mapping to store all launchpads created by the user.
 
     event NewLaunchpad(address indexed launchpad);
-
-    uint256 public constant ZOOM = 10000;
 
     constructor(
         // address _signer,
@@ -205,7 +206,20 @@ contract LaunchpadFactory is Ownable {
             );
         }
 
-        allLaunchpads.push(launchpad); // 
+        allLaunchpads.push(ILaunchpad(launchpad)); 
+        allLaunchpadsOf(msg.sender).push(ILaunchpad(launchpad));
+
+
         emit NewLaunchpad(address(launchpad));
+    }
+
+    // total launchpads created yet on the platform
+    function totalLaunchpads() external view returns (ILaunchpad[] memory launchpads){
+        return allLaunchpads;
+    }
+
+    // total launchpads by user. This will be used for myContribution section
+    function totalLaunchpadsByUser(address _user) external view returns (ILaunchpad[] memory launchpadsByUser){
+        return allLaunchpadsOf[_user];
     }
 }
