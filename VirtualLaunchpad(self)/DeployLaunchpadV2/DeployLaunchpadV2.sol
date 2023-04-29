@@ -99,13 +99,14 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../structs/LaunchpadStructs.sol";
 contract DeployLaunchpadV2 is Ownable {
 
-    address public signer;
+    uint256 public flatfee; // fee that will be calculated on each launchpad creation
+    address public signer; 
     address public superAccount;
     address public virtualLock;
-    address payable public fundAddress;
+    address payable public fundAddress; // address that will calculate all types of funds.
 
-    address[] public allLaunchpads;
-    address public implementation;
+    address[] public allLaunchpads; // array that will store all launchpads created yet.
+    address public implementation; // implementation of the launchpad. This will be used to clone the launchpad
 
     event NewLaunchpadV2(address indexed launchpad);
 
@@ -137,6 +138,10 @@ contract DeployLaunchpadV2 is Ownable {
 
     function setFundAddress(address payable _fundAddress) public onlyOwner {
         fundAddress = _fundAddress;
+    }
+
+    function setFlatFee(uint256 _flatFee) public onlyOwner {
+         flatfee = _flatFee;
     }
 
     function setImplementations(address _implementation) public onlyOwner {
