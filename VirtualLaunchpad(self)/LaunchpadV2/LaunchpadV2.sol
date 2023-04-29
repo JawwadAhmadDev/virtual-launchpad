@@ -11,13 +11,13 @@ import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 
 import "../structs/LaunchpadStructs.sol";
-import "../interfaces/IGSLock.sol";
-import "../interfaces/IGSERC20.sol";
+import "../interfaces/IVirtualLock.sol";
+import "../interfaces/IVirtualERC20.sol";
 
 
 contract LaunchpadV2 is Ownable, Pausable {
     //using SafeMath for uint256;
-    using SafeERC20 for IGSERC20;
+    using SafeERC20 for IVirtualERC20;
     using EnumerableSet for EnumerableSet.AddressSet;
 
     EnumerableSet.AddressSet private whiteListUsers;
@@ -78,7 +78,7 @@ contract LaunchpadV2 is Ownable, Pausable {
         if (pair == address(0)) {
             return true;
         }
-        return IGSERC20(pair).totalSupply() == 0;
+        return IVirtualERC20(pair).totalSupply() == 0;
     }
 
     // function to check that pair is created or not yet for the given token.
@@ -86,7 +86,7 @@ contract LaunchpadV2 is Ownable, Pausable {
         return _check(address(icoToken), feeToken, routerAddress, factoryAddress);
     }
 
-    IGSERC20 public icoToken;
+    IVirtualERC20 public icoToken;
     address public feeToken; //BUSD, BNB
     uint256 public softCap;
     uint256 public hardCap;
@@ -120,7 +120,7 @@ contract LaunchpadV2 is Ownable, Pausable {
 
     uint256 public state; // 1 running||available, 2 finalize, 3 cancel
     uint256 public raisedAmount; // 1 running, 2 cancel
-    address public signer;
+    // address public signer;
     uint256 public constant ZOOM = 10_000;
     uint256 public penaltyFee = 1000; // 10%
 
@@ -132,7 +132,7 @@ contract LaunchpadV2 is Ownable, Pausable {
     uint256 public listingPercent; //1 => 10000
     uint256 public lpLockTime; //seconds
 
-    IGSLock public gsLock;
+    IVirtualLock public virtualLock;
     uint256 public lpLockId;
     uint256 public teamLockId;
 
@@ -172,9 +172,9 @@ contract LaunchpadV2 is Ownable, Pausable {
         fundAddress = _fundAddress;
     }
 
-    function setSigner(address _signer) public onlySuperAccount {
-        signer = _signer;
-    }
+    // function setSigner(address _signer) public onlySuperAccount {
+    //     signer = _signer;
+    // }
 
     function setPenaltyFee(uint256 _penaltyFee) public onlySuperAccount {
         penaltyFee = _penaltyFee;
@@ -207,7 +207,7 @@ contract LaunchpadV2 is Ownable, Pausable {
 
         // initialize data of info structure.
         maxLiquidity = _maxLP;
-        icoToken = IGSERC20(info.icoToken);
+        icoToken = IVirtualERC20(info.icoToken);
         feeToken = info.feeToken;
         softCap = info.softCap;
         hardCap = info.hardCap;
@@ -268,7 +268,7 @@ contract LaunchpadV2 is Ownable, Pausable {
         whiteListUsers.add(settingAccount.superAccount);
         superAccounts.add(settingAccount.superAccount);
 
-        signer = settingAccount.signer;
+        // signer = settingAccount.signer;
         fundAddress = settingAccount.fundAddress;
 
         // transfer ownership from deployLaunchpadV2 address to deployer address.
@@ -277,14 +277,14 @@ contract LaunchpadV2 is Ownable, Pausable {
         transferOwnership(settingAccount.deployer);
 
         // initialize Lock contract address for later locking of tokens.
-        gsLock = IGSLock(settingAccount.gsLock);
+        virtualLock = IVirtualLock(settingAccount.virtualLock);
     }
 
     // ???????????
     function calculateUserTotalTokens(uint256 _amount) private view returns (uint256) {
         uint256 feeTokenDecimals = 18;
         if (feeToken != address(0)) {
-            feeTokenDecimals = IGSERC20(feeToken).decimals();
+            feeTokenDecimals = IVirtualERC20(feeToken).decimals();
         }
         return _amount*(presaleRate)/(10 ** feeTokenDecimals);
     }
@@ -340,7 +340,7 @@ contract LaunchpadV2 is Ownable, Pausable {
             //     )));
             // require(recoverSigner(message, _sig) == signer, 'not in wl');
         } else if (whitelistPool == 2) {
-            require(IGSERC20(holdingToken).balanceOf(_msgSender()) >= holdingTokenAmount, 'Insufficient holding');
+            require(IVirtualERC20(holdingToken).balanceOf(_msgSender()) >= holdingTokenAmount, 'Insufficient holding');
         }
         JoinInfo storage joinInfo = joinInfos[_msgSender()];
         require(joinInfo.totalInvestment+(_amount) >= minInvest && joinInfo.totalInvestment+(_amount) <= maxInvest, 'Invalid amount');
@@ -361,7 +361,7 @@ contract LaunchpadV2 is Ownable, Pausable {
         if (feeToken == address(0)) {
             require(msg.value >= _amount, 'Invalid Amount');
         } else {
-            IGSERC20 feeTokenErc20 = IGSERC20(feeToken);
+            IVirtualERC20 feeTokenErc20 = IVirtualERC20(feeToken);
             feeTokenErc20.safeTransferFrom(_msgSender(), address(this), _amount);
         }
 
@@ -382,7 +382,7 @@ contract LaunchpadV2 is Ownable, Pausable {
 
     function setWhitelistPool(uint256 _wlPool, address _holdingToken, uint256 _amount) external onlyWhiteListUser {
         require(_wlPool < 2 ||
-            (_wlPool == 2 && _holdingToken != address(0) && IGSERC20(_holdingToken).totalSupply() > 0 && _amount > 0), 'Invalid setting');
+            (_wlPool == 2 && _holdingToken != address(0) && IVirtualERC20(_holdingToken).totalSupply() > 0 && _amount > 0), 'Invalid setting');
         holdingToken = _holdingToken;
         holdingTokenAmount = _amount;
         whitelistPool = _wlPool;
@@ -401,7 +401,7 @@ contract LaunchpadV2 is Ownable, Pausable {
 
         uint256 feeTokenDecimals = 18;
         if (feeToken != address(0)) {
-            feeTokenDecimals = IGSERC20(feeToken).decimals();
+            feeTokenDecimals = IVirtualERC20(feeToken).decimals();
         }
 
         uint256 totalRaisedFeeTokens = raisedAmount*(presaleRate)*(raisedTokenFeePercent)/(10 ** feeTokenDecimals)/(ZOOM);
@@ -439,10 +439,10 @@ contract LaunchpadV2 is Ownable, Pausable {
 
         } else {
             if (totalFeeTokensToOwner > 0) {
-                IGSERC20(feeToken).safeTransfer(owner(), totalFeeTokensToOwner);
+                IVirtualERC20(feeToken).safeTransfer(owner(), totalFeeTokensToOwner);
             }
             if (totalRaisedFee > 0) {
-                IGSERC20(feeToken).safeTransfer(fundAddress, totalRaisedFee);
+                IVirtualERC20(feeToken).safeTransfer(fundAddress, totalRaisedFee);
             }
         }
 
@@ -468,7 +468,7 @@ contract LaunchpadV2 is Ownable, Pausable {
                 pair = factoryObj.getPair(address(icoToken), routerObj.WETH());
             } else {
 
-                IGSERC20(feeToken).approve(routerAddress, totalFeeTokensToAddLP);
+                IVirtualERC20(feeToken).approve(routerAddress, totalFeeTokensToAddLP);
                 (,, liquidity) = routerObj.addLiquidity(
                     address(icoToken),
                     address(feeToken),
@@ -484,17 +484,17 @@ contract LaunchpadV2 is Ownable, Pausable {
             require(pair != address(0), 'Invalid pair');
             require(liquidity > 0, 'Invalid Liquidity!');
             if (lpLockTime > 0) {
-                IGSERC20(pair).approve(address(gsLock), liquidity);
+                IVirtualERC20(pair).approve(address(virtualLock), liquidity);
                 uint256 unlockDate = block.timestamp + lpLockTime;
-                lpLockId = gsLock.lock(owner(), pair, true, liquidity, unlockDate, 'LP');
+                lpLockId = virtualLock.lock(owner(), pair, true, liquidity, unlockDate, 'LP');
 
             } else {
-                IGSERC20(pair).safeTransfer(owner(), liquidity);
+                IVirtualERC20(pair).safeTransfer(owner(), liquidity);
             }
 
             if (teamTotalVestingTokens > 0) {
-            icoToken.approve(address(gsLock), teamTotalVestingTokens);
-            teamLockId = gsLock.vestingLock(
+            icoToken.approve(address(virtualLock), teamTotalVestingTokens);
+            teamLockId = virtualLock.vestingLock(
                 owner(),
                 address(icoToken),
                 false,
@@ -524,7 +524,7 @@ contract LaunchpadV2 is Ownable, Pausable {
             payable(_msgSender()).transfer(_amount);
         }
         else {
-            IGSERC20 token = IGSERC20(_token);
+            IVirtualERC20 token = IVirtualERC20(_token);
             token.safeTransfer(_msgSender(), _amount);
         }
     }
@@ -551,7 +551,7 @@ contract LaunchpadV2 is Ownable, Pausable {
             require(address(this).balance > 0, 'Insufficient blc');
             payable(_msgSender()).transfer(totalWithdraw);
         } else {
-            IGSERC20 feeTokenErc20 = IGSERC20(feeToken);
+            IVirtualERC20 feeTokenErc20 = IVirtualERC20(feeToken);
 
             require(feeTokenErc20.balanceOf(address(this)) >= totalWithdraw, 'Insufficient Balance');
             feeTokenErc20.safeTransfer(_msgSender(), totalWithdraw);
@@ -587,7 +587,7 @@ contract LaunchpadV2 is Ownable, Pausable {
             }
 
         } else {
-            IGSERC20 feeTokenErc20 = IGSERC20(feeToken);
+            IVirtualERC20 feeTokenErc20 = IVirtualERC20(feeToken);
             if (refundTokens > 0) {
                 feeTokenErc20.safeTransfer(_msgSender(), refundTokens);
             }

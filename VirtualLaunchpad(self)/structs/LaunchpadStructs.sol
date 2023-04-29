@@ -4,7 +4,7 @@ pragma solidity ^0.8.2;
 library LaunchpadStructs {
     struct LaunchpadInfo {
         address icoToken; // token address for which presale is created
-        address feeToken; // against which token presale is created
+        address feeToken; // which token will be used for fee. i.e. BUSD, USDT or USDC
         uint256 softCap; // min amount this project wants to collect
         uint256 hardCap; // max amount this project wants to collect
         uint256 presaleRate; // how much ico tokens equal to 1 feeToken
@@ -63,7 +63,8 @@ library LaunchpadStructs {
     }
 
     struct FeeSystem {
-        uint256 initFee; // initial fee to create a launchpad. this fee will be transferred to the owner's account at each launchpad creation.
+        // initFee is commented out because init fee functionality is implemented in deployeLaunchpad by named flatFee.
+        // uint256 initFee; // initial fee to create a launchpad. this fee will be transferred to the owner's account at each launchpad creation.
         uint256 raisedFeePercent; // how much percent of collected BNB will be transferred to to the fee collector A/C at the time of finalizing launchpad.
         uint256 raisedTokenFeePercent; // how much percent of collected feeToken will be transferred to the fee collector address at the time of finalizing launchpad.
         uint256 penaltyFee; // how much fee will be dedected on emergency withdrawl in case of both scenarios i.e. BNB / feeToken
@@ -71,10 +72,10 @@ library LaunchpadStructs {
 
     struct SettingAccount {
         address deployer;
-        address signer;
-        address superAccount; //BNB With Raised Amount
+        // address signer; // this is used for permit. But we don't want to use this. That is why it is commented out
+        address superAccount; // address that will be set by the launchpad owner and it will have power on all the launchpads.
         address payable fundAddress; // address which will receive all kind of collected BNB or tokens.
-        address gsLock; // contract address implementing lock mechanism
+        address virtualLock; // contract address implementing lock mechanism
     }
 
     struct TeamVestingInfo {
