@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.2;
 
-import '../structs/LaunchpadStructs.sol';
+import "../structs/LaunchpadStructs.sol";
+
 interface ILaunchpad {
     function initialize(
         LaunchpadStructs.LaunchpadInfo memory info,
@@ -12,4 +13,18 @@ interface ILaunchpad {
         LaunchpadStructs.SettingAccount memory settingAccount,
         uint256 _maxLP
     ) external;
+
+    function getLaunchpadInfo()
+        external
+        view
+        returns (LaunchpadStructs.LaunchpadReturnInfo memory);
+
+    function getOwnerZoneInfo(
+        address _user
+    ) external view returns (LaunchpadStructs.OwnerZoneInfo memory);
+
+    function getJoinedUsers()
+    external
+    view
+    returns (address[] memory);
 }

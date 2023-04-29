@@ -14,11 +14,11 @@ contract LaunchpadFactory is Ownable {
     address public superAccount;
     address public virtualLock;
     address payable public fundAddress; // address that will calculate all types of funds.
-
-    address[] public allLaunchpads; // array that will store all launchpads created yet.
     address public implementation; // implementation of the launchpad. This will be used to clone the launchpad
 
-    event NewLaunchpadV2(address indexed launchpad);
+    ILaunchpad[] public allLaunchpads; // array that will store all launchpads created yet.
+
+    event NewLaunchpad(address indexed launchpad);
 
     uint256 public constant ZOOM = 10000;
 
@@ -206,6 +206,6 @@ contract LaunchpadFactory is Ownable {
         }
 
         allLaunchpads.push(launchpad); // 
-        emit NewLaunchpadV2(address(launchpad));
+        emit NewLaunchpad(address(launchpad));
     }
 }
