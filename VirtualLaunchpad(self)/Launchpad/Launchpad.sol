@@ -57,7 +57,7 @@ contract Launchpad is Ownable, Pausable {
     function removeWhiteListUsers(address[] memory _user) public onlyWhiteListUser {
         for (uint i = 0; i < _user.length; i++) {
             whiteListUsers.remove(_user[i]);
-         }
+        }
     }
 
     function listOfWhiteListUsers() public view returns(address[] memory) {
@@ -132,21 +132,23 @@ contract Launchpad is Ownable, Pausable {
     uint256 public listingPercent; //1 => 10000
     uint256 public lpLockTime; //seconds
 
+    // lock
     IVirtualLock public virtualLock;
     uint256 public lpLockId;
     uint256 public teamLockId;
 
-    //fee
+    // fee
     uint256 public raisedFeePercent; //BNB With Raised Amount
     uint256 public raisedTokenFeePercent;
 
+    // raised
     address payable public fundAddress;
     uint256 public totalSoldTokens;
 
     address public deadAddress = address(0x0000dead);
     uint256 public maxLiquidity = 0;
 
-
+    // structure to hold the investment details of a specific user.
     struct JoinInfo {
         uint256 totalInvestment;
         uint256 claimedTokens;
@@ -154,7 +156,7 @@ contract Launchpad is Ownable, Pausable {
         bool refund;
     }
 
-    mapping(address => JoinInfo) public joinInfos;
+    mapping(address => JoinInfo) public joinInfos; // mapping to store join information against specific user
     EnumerableSet.AddressSet private _joinedUsers; // set of joined users
 
 
