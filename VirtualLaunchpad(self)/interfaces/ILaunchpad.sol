@@ -2,7 +2,7 @@
 pragma solidity ^0.8.2;
 
 import '../structs/LaunchpadStructs.sol';
-interface ILaunchpadV2 {
+interface ILaunchpad {
     function initialize(
         LaunchpadStructs.LaunchpadInfo memory info,
         LaunchpadStructs.ClaimInfo memory userClaimInfo,

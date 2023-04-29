@@ -15,7 +15,7 @@ import "../interfaces/IVirtualLock.sol";
 import "../interfaces/IVirtualERC20.sol";
 
 
-contract LaunchpadV2 is Ownable, Pausable {
+contract Launchpad is Ownable, Pausable {
     //using SafeMath for uint256;
     using SafeERC20 for IVirtualERC20;
     using EnumerableSet for EnumerableSet.AddressSet;
@@ -29,17 +29,17 @@ contract LaunchpadV2 is Ownable, Pausable {
     // mapping(address => bool) public superAccounts;
 
     modifier onlyWhiteListUser() {
-        require(whiteListUsers.contains(msg.sender), "Only Admin");
+        require(whiteListUsers.contains(msg.sender), "launchpad: Only Admin");
         _;
     }
 
     modifier onlySuperAccount() {
-        require(superAccounts.contains(msg.sender), "Only Super");
+        require(superAccounts.contains(msg.sender), "launchpad: Only Super");
         _;
     }
 
     modifier onlyRunningPool() {
-        require(state == 1, "Not available pool");
+        require(state == 1, "launchpad: Not available pool");
         _;
     }
 
@@ -193,16 +193,16 @@ contract LaunchpadV2 is Ownable, Pausable {
     function initialize (LaunchpadStructs.LaunchpadInfo memory info, LaunchpadStructs.ClaimInfo memory userClaimInfo, LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,LaunchpadStructs.DexInfo memory dexInfo, LaunchpadStructs.FeeSystem memory feeInfo, LaunchpadStructs.SettingAccount memory settingAccount, uint256 _maxLP) 
     public 
     {
-        require(info.icoToken != address(0), 'TOKEN');
-        require(info.presaleRate > 0, 'PRESALE');
-        require(info.softCap < info.hardCap, 'CAP');
-        require(info.startTime < info.endTime, 'TIME');
-        require(info.minInvest < info.maxInvest, 'INVEST');
-        require(dexInfo.listingPercent <= ZOOM, 'LISTING');
-        require(userClaimInfo.firstReleasePercent + userClaimInfo.tokenReleaseEachCycle <= ZOOM , 'VESTING');
-        require(teamVestingInfo.teamFirstReleasePercent + teamVestingInfo.teamTokenReleaseEachCycle <= ZOOM, 'Invalid team vst');
+        require(info.icoToken != address(0), 'launchpad: TOKEN');
+        require(info.presaleRate > 0, 'launchpad: PRESALE');
+        require(info.softCap < info.hardCap, 'launchpad: CAP');
+        require(info.startTime < info.endTime, 'launchpad: TIME');
+        require(info.minInvest < info.maxInvest, 'launchpad: INVEST');
+        require(dexInfo.listingPercent <= ZOOM, 'launchpad: LISTING');
+        require(userClaimInfo.firstReleasePercent + userClaimInfo.tokenReleaseEachCycle <= ZOOM , 'launchpad: VESTING');
+        require(teamVestingInfo.teamFirstReleasePercent + teamVestingInfo.teamTokenReleaseEachCycle <= ZOOM, 'launchpad: Invalid team vst');
         // @dev: if there is only one router, then there is no need to check the following condition.
-        require(_check(info.icoToken, info.feeToken, dexInfo.routerAddress, dexInfo.factoryAddress), 'LP Added!'); // pair should not be created yet. if already added then there will be error in autolisting case.
+        require(_check(info.icoToken, info.feeToken, dexInfo.routerAddress, dexInfo.factoryAddress), 'launchpad: LP Added!'); // pair should not be created yet. if already added then there will be error in autolisting case.
 
 
         // initialize data of info structure.
@@ -232,7 +232,7 @@ contract LaunchpadV2 is Ownable, Pausable {
             require(teamVestingInfo.teamFirstReleasePercent > 0 &&
             teamVestingInfo.teamVestingPeriodEachCycle > 0 &&
             teamVestingInfo.teamTokenReleaseEachCycle > 0 &&
-                teamVestingInfo.teamFirstReleasePercent + teamVestingInfo.teamTokenReleaseEachCycle <= ZOOM,"Invalid teamvestinginfo");
+                teamVestingInfo.teamFirstReleasePercent + teamVestingInfo.teamTokenReleaseEachCycle <= ZOOM,"launchpad: Invalid teamvestinginfo");
             teamCliffVesting = teamVestingInfo.teamCliffVesting;
             teamFirstReleasePercent = teamVestingInfo.teamFirstReleasePercent;
             teamVestingPeriodEachCycle = teamVestingInfo.teamVestingPeriodEachCycle;
@@ -246,7 +246,7 @@ contract LaunchpadV2 is Ownable, Pausable {
         // if autolisting option is selected, then initialize dex info.
         if (!manualListing) {
             // this should be first time to create pair of selected tokens.
-            require(_check(info.icoToken, info.feeToken, dexInfo.routerAddress, dexInfo.factoryAddress), 'LP Added!');
+            require(_check(info.icoToken, info.feeToken, dexInfo.routerAddress, dexInfo.factoryAddress), 'launchpad: LP Added!');
             routerAddress = dexInfo.routerAddress;
             factoryAddress = dexInfo.factoryAddress;
             listingPrice = dexInfo.listingPrice;
@@ -317,7 +317,7 @@ contract LaunchpadV2 is Ownable, Pausable {
         returns(address[] memory ) 
         
     {
-        require(end > start && end <= allAllocationCount(), "Invalid");
+        require(end > start && end <= allAllocationCount(), "launchpad: Invalid");
         address[] memory allocations = new address[](end - start);
         uint count = 0;
         for (uint256 i = start; i < end; i++) {
@@ -331,20 +331,20 @@ contract LaunchpadV2 is Ownable, Pausable {
 
     // function contribute(uint256 _amount, bytes calldata _sig) external payable whenNotPaused onlyRunningPool {
     function contribute(uint256 _amount) external payable whenNotPaused onlyRunningPool {
-        require(startTime <= block.timestamp && endTime >= block.timestamp, 'Invalid time');
+        require(startTime <= block.timestamp && endTime >= block.timestamp, 'launchpad: Invalid time');
         if (whitelistPool == 1) {
-            require(whiteListBuyers.contains(_msgSender()), "You are not in whitelist");
+            require(whiteListBuyers.contains(_msgSender()), "launchpad: You are not in whitelist");
             // bytes32 message = prefixed(keccak256(abi.encodePacked(
             //         _msgSender(),
             //         address(this)
             //     )));
             // require(recoverSigner(message, _sig) == signer, 'not in wl');
         } else if (whitelistPool == 2) {
-            require(IVirtualERC20(holdingToken).balanceOf(_msgSender()) >= holdingTokenAmount, 'Insufficient holding');
+            require(IVirtualERC20(holdingToken).balanceOf(_msgSender()) >= holdingTokenAmount, 'launchpad: Insufficient holding');
         }
         JoinInfo storage joinInfo = joinInfos[_msgSender()];
-        require(joinInfo.totalInvestment+(_amount) >= minInvest && joinInfo.totalInvestment+(_amount) <= maxInvest, 'Invalid amount');
-        require(raisedAmount+(_amount) <= hardCap, 'Meet hard cap');
+        require(joinInfo.totalInvestment+(_amount) >= minInvest && joinInfo.totalInvestment+(_amount) <= maxInvest, 'launchpad: Invalid amount');
+        require(raisedAmount+(_amount) <= hardCap, 'launchpad: Meet hard cap');
 
 
         joinInfo.totalInvestment = joinInfo.totalInvestment+(_amount);
@@ -359,7 +359,7 @@ contract LaunchpadV2 is Ownable, Pausable {
 
 
         if (feeToken == address(0)) {
-            require(msg.value >= _amount, 'Invalid Amount');
+            require(msg.value >= _amount, 'launchpad: Invalid Amount');
         } else {
             IVirtualERC20 feeTokenErc20 = IVirtualERC20(feeToken);
             feeTokenErc20.safeTransferFrom(_msgSender(), address(this), _amount);
@@ -375,27 +375,27 @@ contract LaunchpadV2 is Ownable, Pausable {
     }
 
     function setClaimTime(uint256 _listingTime) external onlyWhiteListUser {
-        require(state == 2 && _listingTime > 0, "TIME");
+        require(state == 2 && _listingTime > 0, "launchpad: TIME");
         listingTime = _listingTime;
     }
 
 
     function setWhitelistPool(uint256 _wlPool, address _holdingToken, uint256 _amount) external onlyWhiteListUser {
         require(_wlPool < 2 ||
-            (_wlPool == 2 && _holdingToken != address(0) && IVirtualERC20(_holdingToken).totalSupply() > 0 && _amount > 0), 'Invalid setting');
+            (_wlPool == 2 && _holdingToken != address(0) && IVirtualERC20(_holdingToken).totalSupply() > 0 && _amount > 0), 'launchpad: Invalid setting');
         holdingToken = _holdingToken;
         holdingTokenAmount = _amount;
         whitelistPool = _wlPool;
     }
 
     function finalizeLaunchpad() external onlyWhiteListUser onlyRunningPool {
-        require(block.timestamp > startTime, 'Not start');
+        require(block.timestamp > startTime, 'launchpad: Not start');
 
         if (block.timestamp < endTime) {
-            require(raisedAmount >= hardCap, 'Cant finalize');
+            require(raisedAmount >= hardCap, 'launchpad: Cant finalize');
         }
         if (block.timestamp >= endTime) {
-            require(raisedAmount >= softCap, 'Not meet soft cap');
+            require(raisedAmount >= softCap, 'launchpad: Not meet soft cap');
         }
         state = 2;
 
@@ -451,7 +451,7 @@ contract LaunchpadV2 is Ownable, Pausable {
             maxLiquidity = icoTokenToAddLP;
             listingTime = block.timestamp;
             icoToken.approve(routerAddress, icoTokenToAddLP);
-            require(_check(address(icoToken), feeToken, routerAddress, factoryAddress), 'LP Added!');
+            require(_check(address(icoToken), feeToken, routerAddress, factoryAddress), 'launchpad: LP Added!');
             IUniswapV2Router02 routerObj = IUniswapV2Router02(routerAddress);
             IUniswapV2Factory factoryObj = IUniswapV2Factory(factoryAddress);
             address pair;
@@ -481,12 +481,12 @@ contract LaunchpadV2 is Ownable, Pausable {
                 );
                 pair = factoryObj.getPair(address(icoToken), address(feeToken));
             }
-            require(pair != address(0), 'Invalid pair');
-            require(liquidity > 0, 'Invalid Liquidity!');
+            require(pair != address(0), 'launchpad: Invalid pair');
+            require(liquidity > 0, 'launchpad: Invalid Liquidity!');
             if (lpLockTime > 0) {
                 IVirtualERC20(pair).approve(address(virtualLock), liquidity);
                 uint256 unlockDate = block.timestamp + lpLockTime;
-                lpLockId = virtualLock.lock(owner(), pair, true, liquidity, unlockDate, 'LP');
+                lpLockId = virtualLock.lock(owner(), pair, true, liquidity, unlockDate, 'launchpad: LP');
 
             } else {
                 IVirtualERC20(pair).safeTransfer(owner(), liquidity);
@@ -503,23 +503,23 @@ contract LaunchpadV2 is Ownable, Pausable {
                 teamFirstReleasePercent,
                 teamVestingPeriodEachCycle,
                 teamTokenReleaseEachCycle,
-                'TEAM');
+                'launchpad: TEAM');
             }
 
         }
     }
 
     function claimCanceledTokens() external onlyWhiteListUser {
-        require(state == 3, 'Not cancel');
+        require(state == 3, 'launchpad: Not cancel');
         uint256 balance = icoToken.balanceOf(address(this));
-        require(balance > 0, "Claimed");
+        require(balance > 0, "launchpad: Claimed");
         if (balance > 0) {
             icoToken.safeTransfer(_msgSender(), balance);
         }
     }
 
     function emergencyWithdrawPool(address _token, uint256 _amount) external onlySuperAccount {
-        require(_amount > 0, 'Invalid amount');
+        require(_amount > 0, 'launchpad: Invalid amount');
         if (_token == address(0)) {
             payable(_msgSender()).transfer(_amount);
         }
@@ -533,8 +533,8 @@ contract LaunchpadV2 is Ownable, Pausable {
     function withdrawContribute() external whenNotPaused {
         JoinInfo storage joinInfo = joinInfos[_msgSender()];
         require((state == 3) || (raisedAmount < softCap && block.timestamp > endTime));
-        require(joinInfo.refund == false, 'Refunded');
-        require(joinInfo.totalInvestment > 0, 'Not Invest');
+        require(joinInfo.refund == false, 'launchpad: Refunded');
+        require(joinInfo.totalInvestment > 0, 'launchpad: Not Invest');
 
         uint256 totalWithdraw = joinInfo.totalInvestment;
         joinInfo.refund = true;
@@ -548,21 +548,21 @@ contract LaunchpadV2 is Ownable, Pausable {
         _joinedUsers.remove(_msgSender());
 
         if (feeToken == address(0)) {
-            require(address(this).balance > 0, 'Insufficient blc');
+            require(address(this).balance > 0, 'launchpad: Insufficient blc');
             payable(_msgSender()).transfer(totalWithdraw);
         } else {
             IVirtualERC20 feeTokenErc20 = IVirtualERC20(feeToken);
 
-            require(feeTokenErc20.balanceOf(address(this)) >= totalWithdraw, 'Insufficient Balance');
+            require(feeTokenErc20.balanceOf(address(this)) >= totalWithdraw, 'launchpad: Insufficient Balance');
             feeTokenErc20.safeTransfer(_msgSender(), totalWithdraw);
         }
     }
 
     function emergencyWithdrawContribute() external whenNotPaused onlyRunningPool {
         JoinInfo storage joinInfo = joinInfos[_msgSender()];
-        require(startTime <= block.timestamp && endTime >= block.timestamp, 'Invalid time');
-        require(joinInfo.refund == false, 'Refunded');
-        require(joinInfo.totalInvestment > 0, 'Not contribute');
+        require(startTime <= block.timestamp && endTime >= block.timestamp, 'launchpad: Invalid time');
+        require(joinInfo.refund == false, 'launchpad: Refunded');
+        require(joinInfo.totalInvestment > 0, 'launchpad: Not contribute');
 
         uint256 penalty = joinInfo.totalInvestment*(penaltyFee)/(ZOOM);
         uint256 refundTokens = joinInfo.totalInvestment-(penalty);
@@ -575,7 +575,7 @@ contract LaunchpadV2 is Ownable, Pausable {
         joinInfo.totalInvestment = 0;
         _joinedUsers.remove(_msgSender());
 
-        require(refundTokens > 0, 'Invalid rf amount');
+        require(refundTokens > 0, 'launchpad: Invalid rf amount');
 
         if (feeToken == address(0)) {
             if (refundTokens > 0) {
@@ -601,13 +601,13 @@ contract LaunchpadV2 is Ownable, Pausable {
 
     function claimTokens() external whenNotPaused {
         JoinInfo storage joinInfo = joinInfos[_msgSender()];
-        require(joinInfo.claimedTokens < joinInfo.totalTokens, "Claimed");
-        require(state == 2, "Not finalize");
-        require(joinInfo.refund == false, "Refunded!");
+        require(joinInfo.claimedTokens < joinInfo.totalTokens, "launchpad: Claimed");
+        require(state == 2, "launchpad: Not finalize");
+        require(joinInfo.refund == false, "launchpad: Refunded!");
 
 
         uint256 claimableTokens = _getUserClaimAble(joinInfo);
-        require(claimableTokens > 0, 'Zero token');
+        require(claimableTokens > 0, 'launchpad: Zero token');
 
         uint256 claimedTokens = joinInfo.claimedTokens+(claimableTokens);
         joinInfo.claimedTokens = claimedTokens;

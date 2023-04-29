@@ -5,10 +5,10 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./Clones.sol";
 import "../structs/LaunchpadStructs.sol";
-import "../interfaces/ILaunchpadV2.sol";
+import "../interfaces/ILaunchpad.sol";
 import "../interfaces/IVirtualERC20.sol";
 
-contract DeployLaunchpadV2 is Ownable {
+contract LaunchpadFactory is Ownable {
     uint256 public flatfee; // fee that will be calculated on each launchpad creation
     // address public signer;
     address public superAccount;
@@ -32,15 +32,15 @@ contract DeployLaunchpadV2 is Ownable {
         // require(_signer != address(0) && _signer != address(this), "signer");
         require(
             _virtualLock != address(0) && _virtualLock != address(this),
-            "virtualLock"
+            "LauchpadFactory: virtualLock"
         );
         require(
             _superAccount != address(0) && _superAccount != address(this),
-            "superAccount"
+            "LauchpadFactory: superAccount"
         );
         require(
             _fundAddress != address(0) && _fundAddress != address(this),
-            "fundAddress"
+            "LauchpadFactory: fundAddress"
         );
         // signer = _signer;
         superAccount = _superAccount;
@@ -124,9 +124,9 @@ contract DeployLaunchpadV2 is Ownable {
             // signer != address(0) &&
                 superAccount != address(0) &&
                 fundAddress != address(0),
-            "Can not create launchpad now!"
+            "LauchpadFactory: Can not create launchpad now!"
         );
-        require(msg.value >= flatFee, "Not enough fee!");
+        require(msg.value >= flatFee, "LauchpadFactory: Not enough fee!");
 
         // refund excessive fee paid by the user
         if(msg.value > flatFee){
@@ -167,7 +167,7 @@ contract DeployLaunchpadV2 is Ownable {
         // clone implementation
         address launchpad = Clones.clone(implementation);
         // initialize new cloned implementation
-        ILaunchpadV2(launchpad).initialize(
+        ILaunchpad(launchpad).initialize(
             info,
             claimInfo,
             teamVestingInfo,
@@ -187,12 +187,12 @@ contract DeployLaunchpadV2 is Ownable {
 
             require(
                 icoTokenErc20.balanceOf(_msgSender()) >= totalTokens,
-                "Insufficient Balance"
+                "LauchpadFactory: Insufficient Balance"
             );
             require(
                 icoTokenErc20.allowance(_msgSender(), address(this)) >=
                     totalTokens,
-                "Insufficient Allowance"
+                "LauchpadFactory: Insufficient Allowance"
             );
 
             require(
@@ -201,7 +201,7 @@ contract DeployLaunchpadV2 is Ownable {
                     address(launchpad),
                     totalTokens
                 ),
-                "transfer failed"
+                "LauchpadFactory: transfer failed"
             );
         }
 
