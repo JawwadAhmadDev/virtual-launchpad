@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.2;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+// import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 //import "@openzeppelin/contracts/utils/math/SafeMath.sol";
@@ -15,7 +15,7 @@ import "../interfaces/IVirtualLock.sol";
 import "../interfaces/IVirtualERC20.sol";
 
 
-contract Launchpad is Ownable, Pausable {
+contract Launchpad is Pausable {
     //using SafeMath for uint256;
     using SafeERC20 for IVirtualERC20;
     using EnumerableSet for EnumerableSet.AddressSet;
@@ -28,8 +28,14 @@ contract Launchpad is Ownable, Pausable {
     // mapping(address => bool) public whiteListUsers;
     // mapping(address => bool) public superAccounts;
 
+    address public launchpadOwner;
+
+    modifier onlyLaunchpadOwner() {
+        require(msg.sender == launchpadOwner, "launchpad: Only owner");
+    }
+
     modifier onlyWhiteListUser() {
-        require(whiteListUsers.contains(msg.sender), "launchpad: Only Admin");
+        require(whiteListUsers.contains(msg.sender), "launchpad: Only whiteListUsers");
         _;
     }
 
@@ -426,14 +432,14 @@ contract Launchpad is Ownable, Pausable {
             if (poolType == 0) {
                 icoToken.safeTransfer(deadAddress, totalRefundOrBurnTokens);
             } else {
-                icoToken.safeTransfer(owner(), totalRefundOrBurnTokens);
+                icoToken.safeTransfer(launchpadOwner, totalRefundOrBurnTokens);
             }
         }
 
 
         if (feeToken == address(0)) {
             if (totalFeeTokensToOwner > 0) {
-                payable(owner()).transfer(totalFeeTokensToOwner);
+                payable(launchpadOwner).transfer(totalFeeTokensToOwner);
             }
             if (totalRaisedFee > 0) {
                 payable(fundAddress).transfer(totalRaisedFee);
@@ -441,7 +447,7 @@ contract Launchpad is Ownable, Pausable {
 
         } else {
             if (totalFeeTokensToOwner > 0) {
-                IVirtualERC20(feeToken).safeTransfer(owner(), totalFeeTokensToOwner);
+                IVirtualERC20(feeToken).safeTransfer(launchpadOwner, totalFeeTokensToOwner);
             }
             if (totalRaisedFee > 0) {
                 IVirtualERC20(feeToken).safeTransfer(fundAddress, totalRaisedFee);
@@ -488,16 +494,16 @@ contract Launchpad is Ownable, Pausable {
             if (lpLockTime > 0) {
                 IVirtualERC20(pair).approve(address(virtualLock), liquidity);
                 uint256 unlockDate = block.timestamp + lpLockTime;
-                lpLockId = virtualLock.lock(owner(), pair, true, liquidity, unlockDate, 'launchpad: LP');
+                lpLockId = virtualLock.lock(launchpadOwner, pair, true, liquidity, unlockDate, 'launchpad: LP');
 
             } else {
-                IVirtualERC20(pair).safeTransfer(owner(), liquidity);
+                IVirtualERC20(pair).safeTransfer(launchpadOwner, liquidity);
             }
 
             if (teamTotalVestingTokens > 0) {
             icoToken.approve(address(virtualLock), teamTotalVestingTokens);
             teamLockId = virtualLock.vestingLock(
-                owner(),
+                launchpadOwner,
                 address(icoToken),
                 false,
                 teamTotalVestingTokens,
@@ -520,6 +526,9 @@ contract Launchpad is Ownable, Pausable {
         }
     }
 
+    // super account can withdraw any token or BNB from the contract at any time.
+    // Although this is wrong, but to avoid vastage of assets, this function is implemented.
+    // owner of launchpad will call the super account to perform this action.
     function emergencyWithdrawPool(address _token, uint256 _amount) external onlySuperAccount {
         require(_amount > 0, 'launchpad: Invalid amount');
         if (_token == address(0)) {
@@ -679,7 +688,7 @@ contract Launchpad is Ownable, Pausable {
 
     function getOwnerZoneInfo(address _user) external view returns (LaunchpadStructs.OwnerZoneInfo memory) {
         LaunchpadStructs.OwnerZoneInfo memory result;
-        bool isOwner = _user == owner();
+        bool isOwner = _user == launchpadOwner;
         if (!isOwner) {
             return result;
         }
