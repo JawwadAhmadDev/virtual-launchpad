@@ -382,19 +382,21 @@ contract Launchpad is Pausable {
         state = 3;
     }
 
+    // function to set claim time for raised funds.
+    // Can only be called when launchpad will be in running state.
     function setClaimTime(uint256 _listingTime) external onlyWhiteListUser {
         require(state == 2 && _listingTime > 0, "launchpad: TIME");
         listingTime = _listingTime;
     }
 
 
-    function setWhitelistPool(uint256 _wlPool, address _holdingToken, uint256 _amount) external onlyWhiteListUser {
-        require(_wlPool < 2 ||
-            (_wlPool == 2 && _holdingToken != address(0) && IVirtualERC20(_holdingToken).totalSupply() > 0 && _amount > 0), 'launchpad: Invalid setting');
-        holdingToken = _holdingToken;
-        holdingTokenAmount = _amount;
-        whitelistPool = _wlPool;
-    }
+    // function setWhitelistPool(uint256 _wlPool, address _holdingToken, uint256 _amount) external onlyWhiteListUser {
+    //     require(_wlPool < 2 ||
+    //         (_wlPool == 2 && _holdingToken != address(0) && IVirtualERC20(_holdingToken).totalSupply() > 0 && _amount > 0), 'launchpad: Invalid setting');
+    //     holdingToken = _holdingToken;
+    //     holdingTokenAmount = _amount;
+    //     whitelistPool = _wlPool;
+    // }
 
     function finalizeLaunchpad() external onlyWhiteListUser onlyRunningPool {
         require(block.timestamp > startTime, 'launchpad: Not start');
@@ -517,6 +519,8 @@ contract Launchpad is Pausable {
         }
     }
 
+    // this function will be used to claim cancelled tokens.
+    // it will be used only after the cancellation of launchpad.
     function claimCanceledTokens() external onlyWhiteListUser {
         require(state == 3, 'launchpad: Not cancel');
         uint256 balance = icoToken.balanceOf(address(this));
@@ -540,7 +544,7 @@ contract Launchpad is Pausable {
         }
     }
 
-
+    // anyone can withdraw his contribution at any time by paying 
     function withdrawContribute() external whenNotPaused {
         JoinInfo storage joinInfo = joinInfos[_msgSender()];
         require((state == 3) || (raisedAmount < softCap && block.timestamp > endTime));
