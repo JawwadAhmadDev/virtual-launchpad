@@ -49,9 +49,21 @@ library LaunchpadStructs {
         address feeToken; 
         uint256 listingTime; // time on which user can claim tokens or time on which liquidity is added.
         uint256 whitelistPool; // status of pool. whether it is public / whitelisted / public anti bot (0 public, 1 whitelist, 2 public anti bot)
-        address holdingToken; // this will be used in case of anti bot mechanism
-        uint256 holdingTokenAmount; // this address will also be used in anti-bot mechanism.
+        // address holdingToken; // this will be used in case of anti bot mechanism
+        // uint256 holdingTokenAmount; // this address will also be used in anti-bot mechanism.
                                 // for further detail of anti-bot mechanism see the comments of launchpadInfo structure.
+        
+        // social links
+        string logURL;
+        string description;
+        string websiteURL;
+        string facebookURL;
+        string twitterURL;
+        string githubURL;
+        string telegramURL;
+        string instagramURL;
+        string discordURL;
+        string redditURL;
     }
 
     struct OwnerZoneInfo { // this structure is designed to show owner's informations
@@ -95,6 +107,20 @@ library LaunchpadStructs {
         uint256 listingPercent; // in case of autolisting, how much liquidity of raised BNB or Fee tokens will be added.
         uint256 listingPrice; // how much ico tokens will be equal to 1 fee token at the time of liqudity. 
                               // in other words, how much liquidity of icoTokens will be added against 1 feeToken. i.e. 1 BNB = 50 Bl Tokens
+    }
+
+
+    struct SocialLinks {
+        string logURL;
+        string description;
+        string websiteURL;
+        string facebookURL;
+        string twitterURL;
+        string githubURL;
+        string telegramURL;
+        string instagramURL;
+        string discordURL;
+        string redditURL;
     }
 }
 

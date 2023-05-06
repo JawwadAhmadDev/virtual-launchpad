@@ -36,3 +36,10 @@ There are three states of a launchpad.
 1. At creation time state will be set to 1.
 2. When cancel launchpad function will be called state will be set to 3.
 3. When finalize launchpad function will be called state will be set to 2 and after that no one will be able to take part in the launchpad.
+
+
+
+## Penalty Fee:
+By default the penalty fee is 10% set in each launchpad.
+###: Note: In case of user willing to emergency withdraw his contribution before finalization of launchpad, the penalty fee will be deducted from his contribution and remains amount will be transferred back to the user.
+

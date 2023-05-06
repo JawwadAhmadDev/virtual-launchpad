@@ -103,8 +103,8 @@ contract Launchpad is Pausable {
     uint256 public endTime;
     uint256 public poolType; //0 burn, 1 refund
     uint256 public whitelistPool;  //0 public, 1 whitelist, 2 public anti bot
-    address public holdingToken;
-    uint256 public holdingTokenAmount;
+    // address public holdingToken;
+    // uint256 public holdingTokenAmount;
 
     // contribute vesting
     uint256 public cliffVesting; //First gap release after listing (minutes)
@@ -137,6 +137,18 @@ contract Launchpad is Pausable {
     uint256 public listingPrice;
     uint256 public listingPercent; //1 => 10000
     uint256 public lpLockTime; //seconds
+
+    // social information
+    string public logURL;
+    string public description;
+    string public websiteURL;
+    string public facebookURL;
+    string public twitterURL;
+    string public githubURL;
+    string public telegramURL;
+    string public instagramURL;
+    string public discordURL;
+    string public redditURL;
 
     // lock
     IVirtualLock public virtualLock;
@@ -198,7 +210,7 @@ contract Launchpad is Pausable {
         initialize(info, userClaimInfo, teamVestingInfo, dexInfo, feeInfo, settingAccount, _maxLP);
     }
 
-    function initialize (LaunchpadStructs.LaunchpadInfo memory info, LaunchpadStructs.ClaimInfo memory userClaimInfo, LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,LaunchpadStructs.DexInfo memory dexInfo, LaunchpadStructs.FeeSystem memory feeInfo, LaunchpadStructs.SettingAccount memory settingAccount, uint256 _maxLP) 
+    function initialize (LaunchpadStructs.LaunchpadInfo memory info, LaunchpadStructs.ClaimInfo memory userClaimInfo, LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,LaunchpadStructs.DexInfo memory dexInfo, LaunchpadStructs.FeeSystem memory feeInfo, LaunchpadStructs.SettingAccount memory settingAccount, LaunchpadStructs.SocialLinks memory socialLinks, uint256 _maxLP) 
     public 
     {
         require(info.icoToken != address(0), 'launchpad: TOKEN');
@@ -269,6 +281,19 @@ contract Launchpad is Pausable {
         penaltyFee = feeInfo.penaltyFee;
 
 
+        // initialize social links
+        logURL = socialLinks.logoURL;
+        description = socialLinks.description;
+        websiteURL = socialLinks.websiteURL;
+        facebookURL = socialLinks.facebookURL;
+        twitterURL = socialLinks.twitterURL;
+        githubURL = socialLinks.githubURL;
+        telegramURL = socialLinks.telegramURL;
+        instagramURL = socialLinks.instagramURL;
+        discordURL = socialLinks.discordURL;
+        redditURL = socialLinks.redditURL;
+
+
         state = 1; // initialize state variable to mention that presale is active, not finalized or not cancelled yet.
         
         // assign powers of ownersship to deployer (owner), superAccount
@@ -288,7 +313,7 @@ contract Launchpad is Pausable {
         virtualLock = IVirtualLock(settingAccount.virtualLock);
     }
 
-    // ???????????
+    // calculate how much tokens of icoToken a user will receive by entering amount of fee tokens or BNB.
     function calculateUserTotalTokens(uint256 _amount) private view returns (uint256) {
         uint256 feeTokenDecimals = 18;
         if (feeToken != address(0)) {
@@ -337,6 +362,8 @@ contract Launchpad is Pausable {
 
 
 
+    // function to contribute in the pool for any user.
+    // i.e. user will use this function to purchase the ico tokens of pool by entering BNB of fee token
     // function contribute(uint256 _amount, bytes calldata _sig) external payable whenNotPaused onlyRunningPool {
     function contribute(uint256 _amount) external payable whenNotPaused onlyRunningPool {
         require(startTime <= block.timestamp && endTime >= block.timestamp, 'launchpad: Invalid time');
@@ -347,9 +374,10 @@ contract Launchpad is Pausable {
             //         address(this)
             //     )));
             // require(recoverSigner(message, _sig) == signer, 'not in wl');
-        } else if (whitelistPool == 2) {
-            require(IVirtualERC20(holdingToken).balanceOf(_msgSender()) >= holdingTokenAmount, 'launchpad: Insufficient holding');
-        }
+        } 
+        // else if (whitelistPool == 2) {
+        //     require(IVirtualERC20(holdingToken).balanceOf(_msgSender()) >= holdingTokenAmount, 'launchpad: Insufficient holding');
+        // }
         JoinInfo storage joinInfo = joinInfos[_msgSender()];
         require(joinInfo.totalInvestment+(_amount) >= minInvest && joinInfo.totalInvestment+(_amount) <= maxInvest, 'launchpad: Invalid amount');
         require(raisedAmount+(_amount) <= hardCap, 'launchpad: Meet hard cap');
@@ -389,7 +417,15 @@ contract Launchpad is Pausable {
         listingTime = _listingTime;
     }
 
+    // function to set launchpad whitelist status.
+    // 0 for public, 1 for whitelist.
+    function setWhitelistPool(uint256 _wlPool) external onlyWhiteListUser {
+        require(_wlPool <= 1, "Lanchpad: setWhitelistPool");
 
+        whitelistPool = _wlPool; // 0 for public, 1 for whitelist
+    }
+
+    // @dev: this function is commented out because it has public anti-bot. Same function is edited above by removin public-anti bot mechanism.
     // function setWhitelistPool(uint256 _wlPool, address _holdingToken, uint256 _amount) external onlyWhiteListUser {
     //     require(_wlPool < 2 ||
     //         (_wlPool == 2 && _holdingToken != address(0) && IVirtualERC20(_holdingToken).totalSupply() > 0 && _amount > 0), 'launchpad: Invalid setting');
@@ -397,6 +433,23 @@ contract Launchpad is Pausable {
     //     holdingTokenAmount = _amount;
     //     whitelistPool = _wlPool;
     // }
+
+    // function to edit launchpad information
+    // whitelist user can only edit social links
+    // no other information can be changed
+    function editLaunchpad(LaunchpadStructs.SocialLinks memory socialLinks) external onlyWhiteListUsers onlyRunningPool {
+        logURL = socialLinks.logoURL;
+        description = socialLinks.description;
+        websiteURL = socialLinks.websiteURL;
+        facebookURL = socialLinks.facebookURL;
+        twitterURL = socialLinks.twitterURL;
+        githubURL = socialLinks.githubURL;
+        telegramURL = socialLinks.telegramURL;
+        instagramURL = socialLinks.instagramURL;
+        discordURL = socialLinks.discordURL;
+        redditURL = socialLinks.redditURL;
+    }
+
 
     function finalizeLaunchpad() external onlyWhiteListUser onlyRunningPool {
         require(block.timestamp > startTime, 'launchpad: Not start');
@@ -685,8 +738,19 @@ contract Launchpad is Pausable {
         result.feeToken = feeToken;
         result.listingTime = listingTime;
         result.whitelistPool = whitelistPool;
-        result.holdingToken = holdingToken;
-        result.holdingTokenAmount = holdingTokenAmount;
+        // result.holdingToken = holdingToken;
+        // result.holdingTokenAmount = holdingTokenAmount;
+        result.logoURL = logoURL;
+        result.description = description;
+        result.websiteURL = websiteURL;
+        result.facebookURL = facebookURL;
+        result.twitterURL = twitterURL;
+        result.githubURL = githubURL;
+        result.telegramURL = telegramURL;
+        result.instagramURL = instagramURL;
+        result.discordURL = discordURL;
+        result.redditURL = redditURL;
+
         return result;
     }
 

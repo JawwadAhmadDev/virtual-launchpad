@@ -119,7 +119,8 @@ contract LaunchpadFactory is Ownable {
         LaunchpadStructs.ClaimInfo memory claimInfo,
         LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,
         LaunchpadStructs.DexInfo memory dexInfo,
-        LaunchpadStructs.FeeSystem memory feeInfo
+        LaunchpadStructs.FeeSystem memory feeInfo,
+        LaunchpadStructs.SocialLinks memory socialLinks
     ) external payable {
         require(
             // signer != address(0) &&
@@ -175,6 +176,7 @@ contract LaunchpadFactory is Ownable {
             dexInfo,
             feeInfo,
             settingAccount,
+            socialLinks,
             maxLP
         );
         // LaunchpadV2 launchpad = new LaunchpadV2(info, claimInfo, teamVestingInfo, dexInfo, feeInfo, settingAccount, maxLP);
