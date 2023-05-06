@@ -1,7 +1,7 @@
 # Contract Deployed Addresses:
-### Virtual Launchpad: [https://testnet.bscscan.com/address/0x8ca4086d0fc4d232f959307f723b4206a200c3e3#code]
-### Virtual Lock; [https://testnet.bscscan.com/address/0xaa388675726517982b36883f55d2fde1b270862f#code]
-### Virtual Factory: []
+### VirtualLaunchpad: [https://testnet.bscscan.com/address/0x8ca4086d0fc4d232f959307f723b4206a200c3e3#code]
+### VirtualLock: [https://testnet.bscscan.com/address/0xaa388675726517982b36883f55d2fde1b270862f#code]
+### LauchpadFactory: [https://testnet.bscscan.com/address/0xbc986976aabe94c3ab192196a8e8a7e94e11ac12#code]
 
 
 # Powers Description
