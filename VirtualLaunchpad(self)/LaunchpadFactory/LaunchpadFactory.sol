@@ -3,6 +3,7 @@ pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./Clones.sol";
 import "../structs/LaunchpadStructs.sol";
@@ -10,11 +11,11 @@ import "../interfaces/ILaunchpad.sol";
 import "../interfaces/IVirtualERC20.sol";
 
 contract LaunchpadFactory is Ownable {
+    using SafeMath for uint256;
     using Address for address payable;
-
     uint256 public constant ZOOM = 10000;
 
-    uint256 public flatfee; // fee that will be calculated on each launchpad creation
+    uint256 public flatFee; // fee that will be calculated on each launchpad creation
     // address public signer;
     address public superAccount;
     address public virtualLock;
@@ -71,7 +72,7 @@ contract LaunchpadFactory is Ownable {
     }
 
     function setFlatFee(uint256 _flatFee) public onlyOwner {
-        flatfee = _flatFee;
+        flatFee = _flatFee;
     }
 
     function setImplementations(address _implementation) public onlyOwner {
@@ -80,7 +81,7 @@ contract LaunchpadFactory is Ownable {
 
     // if deployer send BNBs more than decided fee, then excessive fee will be returned back to the deployer.
     function refundExcessiveFee() internal {
-        uint256 refund = msg.value.sub(flatFee);
+        uint256 refund = msg.value - (flatFee);
         if (refund > 0) {
             payable(msg.sender).sendValue(refund);
         }
@@ -89,30 +90,23 @@ contract LaunchpadFactory is Ownable {
     // this function is used to calcluate how many tokens deployer should have to approve to Deploy Launchpad to create a new launchpad.
     function calculateTokens(
         LaunchpadStructs.CalculateTokenInput memory input
-    ) private view returns (uint256, uint256) {
+    ) public view returns (uint256, uint256) {
         uint256 feeTokenDecimals = 18;
         if (input.feeToken != address(0)) {
             feeTokenDecimals = IVirtualERC20(input.feeToken).decimals();
         }
 
-        uint256 totalPresaleTokens = (input.presaleRate * (input.hardCap)) /
-            (10 ** feeTokenDecimals);
+        uint256 totalPresaleTokens = (input.presaleRate.mul((input.hardCap))).div(10 ** feeTokenDecimals);
 
-        uint256 totalFeeTokens = (totalPresaleTokens *
-            (input.raisedTokenFeePercent)) / (ZOOM);
+        uint256 totalFeeTokens = (totalPresaleTokens.mul(input.raisedTokenFeePercent)).div(ZOOM);
 
-        uint256 totalRaisedFee = (input.hardCap * (input.raisedFeePercent)) /
-            (ZOOM);
-        uint256 netCap = input.hardCap - (totalRaisedFee);
-        uint256 totalFeeTokensToAddLP = (netCap * (input.listingPercent)) /
-            (ZOOM);
+        uint256 totalRaisedFee = (input.hardCap.mul(input.raisedFeePercent)).div(ZOOM);
+        uint256 netCap = input.hardCap.sub(totalRaisedFee);
+        uint256 totalFeeTokensToAddLP = (netCap.mul(input.listingPercent)).div(ZOOM);
 
-        uint256 totalLiquidityTokens = (totalFeeTokensToAddLP *
-            (input.listingPrice)) / (10 ** feeTokenDecimals);
+        uint256 totalLiquidityTokens = (totalFeeTokensToAddLP.mul(input.listingPrice)).div(10 ** feeTokenDecimals);
 
-        uint256 result = totalPresaleTokens +
-            (totalFeeTokens) +
-            (totalLiquidityTokens);
+        uint256 result = totalPresaleTokens.add(totalFeeTokens).add(totalLiquidityTokens);
         return (result, totalLiquidityTokens);
     }
 
@@ -227,4 +221,5 @@ contract LaunchpadFactory is Ownable {
     function totalLaunchpadsByUser(address _user) external view returns (ILaunchpad[] memory launchpadsByUser){
         return allLaunchpadsOf[_user];
     }
+
 }
