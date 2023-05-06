@@ -140,7 +140,7 @@ contract Launchpad is Pausable {
     uint256 public lpLockTime; //seconds
 
     // social information
-    string public logURL;
+    string public logoURL;
     string public description;
     string public websiteURL;
     string public facebookURL;
@@ -207,8 +207,8 @@ contract Launchpad is Pausable {
         routerAddress = _router;
     }
 
-    constructor(LaunchpadStructs.LaunchpadInfo memory info, LaunchpadStructs.ClaimInfo memory userClaimInfo, LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,LaunchpadStructs.DexInfo memory dexInfo, LaunchpadStructs.FeeSystem memory feeInfo, LaunchpadStructs.SettingAccount memory settingAccount, uint256 _maxLP) {
-        initialize(info, userClaimInfo, teamVestingInfo, dexInfo, feeInfo, settingAccount, _maxLP);
+    constructor(LaunchpadStructs.LaunchpadInfo memory info, LaunchpadStructs.ClaimInfo memory userClaimInfo, LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,LaunchpadStructs.DexInfo memory dexInfo, LaunchpadStructs.FeeSystem memory feeInfo, LaunchpadStructs.SettingAccount memory settingAccount, LaunchpadStructs.SocialLinks memory socialLinks, uint256 _maxLP) {
+        initialize(info, userClaimInfo, teamVestingInfo, dexInfo, feeInfo, settingAccount, socialLinks, _maxLP);
     }
 
     function initialize (LaunchpadStructs.LaunchpadInfo memory info, LaunchpadStructs.ClaimInfo memory userClaimInfo, LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,LaunchpadStructs.DexInfo memory dexInfo, LaunchpadStructs.FeeSystem memory feeInfo, LaunchpadStructs.SettingAccount memory settingAccount, LaunchpadStructs.SocialLinks memory socialLinks, uint256 _maxLP) 
@@ -283,7 +283,7 @@ contract Launchpad is Pausable {
 
 
         // initialize social links
-        logURL = socialLinks.logoURL;
+        logoURL = socialLinks.logoURL;
         description = socialLinks.description;
         websiteURL = socialLinks.websiteURL;
         facebookURL = socialLinks.facebookURL;
@@ -437,7 +437,7 @@ contract Launchpad is Pausable {
     // whitelist user can only edit social links
     // no other information can be changed
     function editLaunchpad(LaunchpadStructs.SocialLinks memory socialLinks) external onlyWhiteListUser onlyRunningPool {
-        logURL = socialLinks.logoURL;
+        logoURL = socialLinks.logoURL;
         description = socialLinks.description;
         websiteURL = socialLinks.websiteURL;
         facebookURL = socialLinks.facebookURL;

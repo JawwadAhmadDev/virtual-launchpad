@@ -54,7 +54,7 @@ library LaunchpadStructs {
                                 // for further detail of anti-bot mechanism see the comments of launchpadInfo structure.
         
         // social links
-        string logURL;
+        string logoURL;
         string description;
         string websiteURL;
         string facebookURL;
@@ -111,7 +111,7 @@ library LaunchpadStructs {
 
 
     struct SocialLinks {
-        string logURL;
+        string logoURL;
         string description;
         string websiteURL;
         string facebookURL;
