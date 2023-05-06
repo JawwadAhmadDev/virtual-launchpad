@@ -32,6 +32,7 @@ contract Launchpad is Pausable {
 
     modifier onlyLaunchpadOwner() {
         require(msg.sender == launchpadOwner, "launchpad: Only owner");
+        _;
     }
 
     modifier onlyWhiteListUser() {
@@ -304,10 +305,8 @@ contract Launchpad is Pausable {
         // signer = settingAccount.signer;
         fundAddress = settingAccount.fundAddress;
 
-        // transfer ownership from deployLaunchpadV2 address to deployer address.
-        // because when any user will call the function deployLaunchpad of deployLaunchpadV2 function, msg.sender will be DeployLaunchpadV2 contract address not the deployer.
-        // that's why initially ownership will be assigned to the deployLaunchpadV2 smart contract address.
-        transferOwnership(settingAccount.deployer);
+        // transfer ownership from deployLaunchpad address to deployer address.
+        launchpadOwner = settingAccount.deployer;
 
         // initialize Lock contract address for later locking of tokens.
         virtualLock = IVirtualLock(settingAccount.virtualLock);
@@ -437,7 +436,7 @@ contract Launchpad is Pausable {
     // function to edit launchpad information
     // whitelist user can only edit social links
     // no other information can be changed
-    function editLaunchpad(LaunchpadStructs.SocialLinks memory socialLinks) external onlyWhiteListUsers onlyRunningPool {
+    function editLaunchpad(LaunchpadStructs.SocialLinks memory socialLinks) external onlyWhiteListUser onlyRunningPool {
         logURL = socialLinks.logoURL;
         description = socialLinks.description;
         websiteURL = socialLinks.websiteURL;
