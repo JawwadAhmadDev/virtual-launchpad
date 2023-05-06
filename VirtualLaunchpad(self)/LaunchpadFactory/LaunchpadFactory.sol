@@ -2,6 +2,7 @@
 pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./Clones.sol";
 import "../structs/LaunchpadStructs.sol";
@@ -9,6 +10,8 @@ import "../interfaces/ILaunchpad.sol";
 import "../interfaces/IVirtualERC20.sol";
 
 contract LaunchpadFactory is Ownable {
+    using Address for address payable;
+
     uint256 public constant ZOOM = 10000;
 
     uint256 public flatfee; // fee that will be calculated on each launchpad creation
@@ -209,7 +212,7 @@ contract LaunchpadFactory is Ownable {
         }
 
         allLaunchpads.push(ILaunchpad(launchpad)); 
-        allLaunchpadsOf(msg.sender).push(ILaunchpad(launchpad));
+        allLaunchpadsOf[msg.sender].push(ILaunchpad(launchpad));
 
 
         emit NewLaunchpad(address(launchpad));

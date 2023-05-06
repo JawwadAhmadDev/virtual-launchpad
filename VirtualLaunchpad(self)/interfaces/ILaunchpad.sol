@@ -11,6 +11,7 @@ interface ILaunchpad {
         LaunchpadStructs.DexInfo memory dexInfo,
         LaunchpadStructs.FeeSystem memory feeInfo,
         LaunchpadStructs.SettingAccount memory settingAccount,
+        LaunchpadStructs.SocialLinks memory socialLinks,
         uint256 _maxLP
     ) external;
 
