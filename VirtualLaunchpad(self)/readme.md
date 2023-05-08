@@ -1,7 +1,21 @@
-# Contract Deployed Addresses:
-### VirtualLaunchpad: [//testnet.bscscan.com/address/0x007e44dc895ce1df1d85ea62a3e3243d9e25c546#code]
-### VirtualLock: [https://testnet.bscscan.com/address/0xaa388675726517982b36883f55d2fde1b270862f#code]
-### LauchpadFactory: [https://testnet.bscscan.com/address/0x0ad26d5cc37964e6620e090e3293506cf848f41e#code]
+# Contract Deployment Details:
+info: ["0x86BdF6871374B0Be8C4E57B519181036f79dEE57","0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee","2000000000000000000","4000000000000000000",1000,"1000000000000000000","2000000000000000000",1683263004,1684472604,0,0]
+claimInfo: [1800,0,0,0,0]
+teamVesting: [0,0,0,0,0]
+dexInfo: [false,"0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3","0xB7926C0430Afb07AA7DEfDE6DA862aE0Bde767bc","100000000000000000000",50,1800]
+feeInfo: [2,2,1]
+SettingAccount: ["0xcb06C621e1DCf9D5BB67Af79BEa90Ac626e4Ff38","0xcb06C621e1DCf9D5BB67Af79BEa90Ac626e4Ff38","0xcb06C621e1DCf9D5BB67Af79BEa90Ac626e4Ff38","0xB764Af9108c982dBebeaA1306490a908768D20c4"]
+SocialLinks: ["", "", "", "", "", "", "", "", "", ""]
+maxLP: 50000000000000000000
+
+Parameters for calculate tokens: ["0x0000000000000000000000000000000000000000", 1000, "4000000000000000000", 0, 2, 60, "100000000000000000000"]
+
+
+VirtualLaunchpad: [https://testnet.bscscan.com/address/0x007e44dc895ce1df1d85ea62a3e3243d9e25c546#code]
+VirtualLock: [https://testnet.bscscan.com/address/0xaa388675726517982b36883f55d2fde1b270862f#code]
+LauchpadFactory: [https://testnet.bscscan.com/address/0x0ad26d5cc37964e6620e090e3293506cf848f41e#code]
+
+
 
 
 # Powers Description
