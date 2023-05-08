@@ -80,12 +80,12 @@ contract LaunchpadFactory is Ownable {
     }
 
     // if deployer send BNBs more than decided fee, then excessive fee will be returned back to the deployer.
-    function refundExcessiveFee() internal {
-        uint256 refund = msg.value - (flatFee);
-        if (refund > 0) {
-            payable(msg.sender).sendValue(refund);
-        }
-    }
+    // function refundExcessiveFee() internal {
+    //     uint256 refund = msg.value - (flatFee);
+    //     if (refund > 0) {
+    //         payable(msg.sender).sendValue(refund);
+    //     }
+    // }
 
     // this function is used to calcluate how many tokens deployer should have to approve to Deploy Launchpad to create a new launchpad.
     function calculateTokens(
@@ -128,9 +128,9 @@ contract LaunchpadFactory is Ownable {
         require(msg.value >= flatFee, "LauchpadFactory: Not enough fee!");
 
         // refund excessive fee paid by the user
-        if(msg.value > flatFee){
-            refundExcessiveFee();
-        }
+        // if(msg.value > flatFee){
+        //     refundExcessiveFee();
+        // }
 
         LaunchpadStructs.SettingAccount memory settingAccount = LaunchpadStructs
             .SettingAccount(
