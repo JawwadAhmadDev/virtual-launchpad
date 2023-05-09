@@ -1,5 +1,5 @@
 # Contract Deployment Details:
-##Note: Each percent value will be passed after multiplying with 100. for example, 100% will be passed as 100 * 100 = 10000
+## Note: Each percent value will be passed after multiplying with 100. for example, 100% will be passed as 100 * 100 = 10000
 info: ["0x86BdF6871374B0Be8C4E57B519181036f79dEE57","0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee","2000000000000000000","4000000000000000000",1000,"1000000000000000000","2000000000000000000",1683263004,1684472604,0,0]
 claimInfo: [1800,0,0,0,0]
 teamVesting: [0,0,0,0,0]
