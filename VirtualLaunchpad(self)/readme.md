@@ -7,9 +7,9 @@ feeInfo: [2,2,1]
 SettingAccount: ["0xcb06C621e1DCf9D5BB67Af79BEa90Ac626e4Ff38","0xcb06C621e1DCf9D5BB67Af79BEa90Ac626e4Ff38","0xcb06C621e1DCf9D5BB67Af79BEa90Ac626e4Ff38","0xB764Af9108c982dBebeaA1306490a908768D20c4"]
 SocialLinks: ["", "", "", "", "", "", "", "", "", ""]
 maxLP: 50000000000000000000
-
-Parameters for calculate tokens: ["0x0000000000000000000000000000000000000000", 1000, "4000000000000000000", 0, 2, 60, "100000000000000000000"]
-
+    
+Parameters for calculate tokens: ["0x0000000000000000000000000000000000000000", "100000000000000000000" , "4000000000000000000", 0, 500, 6000, "50000000000000000000"]
+                                 [FeeToken,presaleRate,hardcap,feeTokenRaisedPercent,raisedFeePercent,ListingPercent,ListingRate]
 
 VirtualLaunchpad: [https://testnet.bscscan.com/address/0x007e44dc895ce1df1d85ea62a3e3243d9e25c546#code]
 VirtualLock: [https://testnet.bscscan.com/address/0xaa388675726517982b36883f55d2fde1b270862f#code]
