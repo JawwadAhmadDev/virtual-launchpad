@@ -1,4 +1,5 @@
 # Contract Deployment Details:
+## Note: Each percent value will be passed after multiplying with 100. for example, 100% will be passed as 100 * 100 = 10000
 info: ["0x86BdF6871374B0Be8C4E57B519181036f79dEE57","0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee","2000000000000000000","4000000000000000000",1000,"1000000000000000000","2000000000000000000",1683263004,1684472604,0,0]
 claimInfo: [1800,0,0,0,0]
 teamVesting: [0,0,0,0,0]
@@ -7,9 +8,9 @@ feeInfo: [2,2,1]
 SettingAccount: ["0xcb06C621e1DCf9D5BB67Af79BEa90Ac626e4Ff38","0xcb06C621e1DCf9D5BB67Af79BEa90Ac626e4Ff38","0xcb06C621e1DCf9D5BB67Af79BEa90Ac626e4Ff38","0xB764Af9108c982dBebeaA1306490a908768D20c4"]
 SocialLinks: ["", "", "", "", "", "", "", "", "", ""]
 maxLP: 50000000000000000000
-
-Parameters for calculate tokens: ["0x0000000000000000000000000000000000000000", 1000, "4000000000000000000", 0, 2, 60, "100000000000000000000"]
-
+    
+Parameters for calculate tokens: ["0x0000000000000000000000000000000000000000", "100000000000000000000" , "4000000000000000000", 0, 500, 6000, "50000000000000000000"]
+                                 [FeeToken,presaleRate,hardcap,feeTokenRaisedPercent,raisedFeePercent,ListingPercent,ListingRate]
 
 VirtualLaunchpad: [https://testnet.bscscan.com/address/0x007e44dc895ce1df1d85ea62a3e3243d9e25c546#code]
 VirtualLock: [https://testnet.bscscan.com/address/0xaa388675726517982b36883f55d2fde1b270862f#code]
