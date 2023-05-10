@@ -90,13 +90,13 @@ library LaunchpadStructs {
         address virtualLock; // contract address implementing lock mechanism
     }
 
-    struct TeamVestingInfo {
-        uint256 teamTotalVestingTokens; // how much tokens are being invested in presale
-        uint256 teamCliffVesting; //First token release after listing (minutes)
-        uint256 teamFirstReleasePercent; // how much percentage of tokens will be released first time.
-        uint256 teamVestingPeriodEachCycle; // tokens release time limit for each cycle after first time.
-        uint256 teamTokenReleaseEachCycle; // percentage of tokens to be released in each cycle.
-    }
+    // struct TeamVestingInfo {
+    //     uint256 teamTotalVestingTokens; // how much tokens are being invested in presale
+    //     uint256 teamCliffVesting; //First token release after listing (minutes)
+    //     uint256 teamFirstReleasePercent; // how much percentage of tokens will be released first time.
+    //     uint256 teamVestingPeriodEachCycle; // tokens release time limit for each cycle after first time.
+    //     uint256 teamTokenReleaseEachCycle; // percentage of tokens to be released in each cycle.
+    // }
 
     struct CalculateTokenInput {
         address feeToken; // against which token presale is created. i.e. against BNB or BUSD or any other ERC20 token.

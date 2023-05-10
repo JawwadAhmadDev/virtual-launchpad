@@ -5,15 +5,13 @@ pragma solidity ^0.8.2;
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 //import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
-import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
+import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
+import "@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
-
 
 import "../structs/LaunchpadStructs.sol";
 import "../interfaces/IVirtualLock.sol";
 import "../interfaces/IVirtualERC20.sol";
-
 
 contract Launchpad is Pausable {
     //using SafeMath for uint256;
@@ -23,7 +21,6 @@ contract Launchpad is Pausable {
     EnumerableSet.AddressSet private whiteListUsers;
     EnumerableSet.AddressSet private superAccounts;
     EnumerableSet.AddressSet private whiteListBuyers;
-
 
     // mapping(address => bool) public whiteListUsers;
     // mapping(address => bool) public superAccounts;
@@ -36,7 +33,10 @@ contract Launchpad is Pausable {
     }
 
     modifier onlyWhiteListUser() {
-        require(whiteListUsers.contains(msg.sender), "launchpad: Only whiteListUsers");
+        require(
+            whiteListUsers.contains(msg.sender),
+            "launchpad: Only whiteListUsers"
+        );
         _;
     }
 
@@ -54,25 +54,32 @@ contract Launchpad is Pausable {
     //     whiteListUsers[_user] = _whiteList;
     // }
 
-    function addWhiteListUsers(address[] memory _user) public onlyWhiteListUser {
+    function addWhiteListUsers(
+        address[] memory _user
+    ) public onlyWhiteListUser {
         for (uint i = 0; i < _user.length; i++) {
             whiteListUsers.add(_user[i]);
         }
     }
 
-
-    function removeWhiteListUsers(address[] memory _user) public onlyWhiteListUser {
+    function removeWhiteListUsers(
+        address[] memory _user
+    ) public onlyWhiteListUser {
         for (uint i = 0; i < _user.length; i++) {
             whiteListUsers.remove(_user[i]);
         }
     }
 
-    function listOfWhiteListUsers() public view returns(address[] memory) {
+    function listOfWhiteListUsers() public view returns (address[] memory) {
         return whiteListUsers.values();
     }
 
-
-    function _check(address _tokenA, address _tokenB, address _routerAddress, address _factoryAddress) internal view returns (bool) {
+    function _check(
+        address _tokenA,
+        address _tokenB,
+        address _routerAddress,
+        address _factoryAddress
+    ) internal view returns (bool) {
         address pair;
         IUniswapV2Router02 routerObj = IUniswapV2Router02(_routerAddress);
         IUniswapV2Factory factoryObj = IUniswapV2Factory(_factoryAddress);
@@ -90,7 +97,8 @@ contract Launchpad is Pausable {
 
     // function to check that pair is created or not yet for the given token.
     function check() external view returns (bool) {
-        return _check(address(icoToken), feeToken, routerAddress, factoryAddress);
+        return
+            _check(address(icoToken), feeToken, routerAddress, factoryAddress);
     }
 
     IVirtualERC20 public icoToken;
@@ -103,7 +111,7 @@ contract Launchpad is Pausable {
     uint256 public startTime;
     uint256 public endTime;
     uint256 public poolType; //0 burn, 1 refund
-    uint256 public whitelistPool;  //0 public, 1 whitelist, 2 public anti bot
+    uint256 public whitelistPool; //0 public, 1 whitelist, 2 public anti bot
     // address public holdingToken;
     // uint256 public holdingTokenAmount;
 
@@ -115,18 +123,16 @@ contract Launchpad is Pausable {
     uint256 public tokenReleaseEachCycle; //percent: 0 is not vesting
 
     //team vesting
-    uint256 public teamTotalVestingTokens; // if > 0, lock
-    uint256 public teamCliffVesting; //First gap release after listing (minutes)
-    uint256 public teamFirstReleasePercent; // 0 is not vesting
-    uint256 public teamVestingPeriodEachCycle; // 0 is not vesting
-    uint256 public teamTokenReleaseEachCycle; //percent: 0 is not vesting
+    // uint256 public teamTotalVestingTokens; // if > 0, lock
+    // uint256 public teamCliffVesting; //First gap release after listing (minutes)
+    // uint256 public teamFirstReleasePercent; // 0 is not vesting
+    // uint256 public teamVestingPeriodEachCycle; // 0 is not vesting
+    // uint256 public teamTokenReleaseEachCycle; //percent: 0 is not vesting
 
-
-
-    uint256 public listingTime; // 
+    uint256 public listingTime; // Time at which funds will be / have listed to the DEX.
 
     uint256 public state; // 1 running||available, 2 finalize, 3 cancel
-    uint256 public raisedAmount; // 1 running, 2 cancel
+    uint256 public raisedAmount; // total Fee Tokens or BNBs launchpad collected yet.
     // address public signer;
     uint256 public constant ZOOM = 10_000;
     uint256 public penaltyFee = 1000; // 10%
@@ -162,34 +168,55 @@ contract Launchpad is Pausable {
 
     // raised
     address payable public fundAddress;
-    uint256 public totalSoldTokens;
+    uint256 public totalSoldTokens; // how much tokens of ICO tokens sold yet.
 
     address public deadAddress = address(0x0000dead);
     uint256 public maxLiquidity = 0;
 
     // structure to hold the investment details of a specific user.
     struct JoinInfo {
-        uint256 totalInvestment;
+        uint256 totalInvestment; // total amount of BNB or Fee token against which launchpad is created, user invested.
         uint256 claimedTokens;
         uint256 totalTokens;
-        bool refund;
+        bool refund; // user has claimed his tokens or not. in both cases, emergencywithdraw or withdrawContribute.
     }
 
     mapping(address => JoinInfo) public joinInfos; // mapping to store join information against specific user
-    EnumerableSet.AddressSet private _joinedUsers; // set of joined users
-
-
+    EnumerableSet.AddressSet private _joinedUsers; // set of joined users. Which which users has contributions in this launchpad yet.
 
     event Invest(address investor, uint value, uint tokens);
-    event Buy(uint256 indexed _saleId, uint256 indexed _quantity, uint256 indexed _price, address _buyer, address _seller);
-    event UpdateSaleQuantity(uint256 indexed _saleId, address indexed _seller, uint256 indexed _quantity, uint256 _status);
-    event UpdateSalePrice(uint256 indexed _saleId, address indexed _seller, uint256 indexed _price);
+    event Buy(
+        uint256 indexed _saleId,
+        uint256 indexed _quantity,
+        uint256 indexed _price,
+        address _buyer,
+        address _seller
+    );
+    event UpdateSaleQuantity(
+        uint256 indexed _saleId,
+        address indexed _seller,
+        uint256 indexed _quantity,
+        uint256 _status
+    );
+    event UpdateSalePrice(
+        uint256 indexed _saleId,
+        address indexed _seller,
+        uint256 indexed _price
+    );
     event CancelListed(uint256 indexed _saleId, address indexed _receiver);
-    event List(uint indexed _saleId, uint256 indexed _price, uint256 indexed _quantity, address _owner, uint256 _tokenId, uint256 status);
+    event List(
+        uint indexed _saleId,
+        uint256 indexed _price,
+        uint256 indexed _quantity,
+        address _owner,
+        uint256 _tokenId,
+        uint256 status
+    );
     event TokenClaimed(address _address, uint256 tokensClaimed);
 
-
-    function setFundAddress(address payable _fundAddress) public onlySuperAccount {
+    function setFundAddress(
+        address payable _fundAddress
+    ) public onlySuperAccount {
         fundAddress = _fundAddress;
     }
 
@@ -202,30 +229,74 @@ contract Launchpad is Pausable {
         penaltyFee = _penaltyFee * 100;
     }
 
-
     function setDex(address _factory, address _router) public onlySuperAccount {
         factoryAddress = _factory;
         routerAddress = _router;
     }
 
-    constructor(LaunchpadStructs.LaunchpadInfo memory info, LaunchpadStructs.ClaimInfo memory userClaimInfo, LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,LaunchpadStructs.DexInfo memory dexInfo, LaunchpadStructs.FeeSystem memory feeInfo, LaunchpadStructs.SettingAccount memory settingAccount, LaunchpadStructs.SocialLinks memory socialLinks, uint256 _maxLP, uint256 _penaltyFeePercent) {
-        initialize(info, userClaimInfo, teamVestingInfo, dexInfo, feeInfo, settingAccount, socialLinks, _maxLP, _penaltyFeePercent);
+    constructor(
+        LaunchpadStructs.LaunchpadInfo memory info,
+        LaunchpadStructs.ClaimInfo memory userClaimInfo,
+        // LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,
+        LaunchpadStructs.DexInfo memory dexInfo,
+        LaunchpadStructs.FeeSystem memory feeInfo,
+        LaunchpadStructs.SettingAccount memory settingAccount,
+        LaunchpadStructs.SocialLinks memory socialLinks,
+        uint256 _maxLP,
+        uint256 _penaltyFeePercent
+    ) {
+        initialize(
+            info,
+            userClaimInfo,
+            // teamVestingInfo,
+            dexInfo,
+            feeInfo,
+            settingAccount,
+            socialLinks,
+            _maxLP,
+            _penaltyFeePercent
+        );
     }
 
-    function initialize (LaunchpadStructs.LaunchpadInfo memory info, LaunchpadStructs.ClaimInfo memory userClaimInfo, LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,LaunchpadStructs.DexInfo memory dexInfo, LaunchpadStructs.FeeSystem memory feeInfo, LaunchpadStructs.SettingAccount memory settingAccount, LaunchpadStructs.SocialLinks memory socialLinks, uint256 _maxLP, uint256 _penaltyFeePercent) 
-    public 
-    {
-        require(info.icoToken != address(0), 'launchpad: TOKEN');
-        require(info.presaleRate > 0, 'launchpad: PRESALE');
-        require(info.softCap < info.hardCap, 'launchpad: CAP');
-        require(info.startTime < info.endTime, 'launchpad: TIME');
-        require(info.minInvest < info.maxInvest, 'launchpad: INVEST');
-        require(dexInfo.listingPercent <= ZOOM, 'launchpad: LISTING');
-        require(userClaimInfo.firstReleasePercent + userClaimInfo.tokenReleaseEachCycle <= ZOOM , 'launchpad: VESTING');
-        require(teamVestingInfo.teamFirstReleasePercent + teamVestingInfo.teamTokenReleaseEachCycle <= ZOOM, 'launchpad: Invalid team vst');
+    function initialize(
+        LaunchpadStructs.LaunchpadInfo memory info,
+        LaunchpadStructs.ClaimInfo memory userClaimInfo,
+        // LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,
+        LaunchpadStructs.DexInfo memory dexInfo,
+        LaunchpadStructs.FeeSystem memory feeInfo,
+        LaunchpadStructs.SettingAccount memory settingAccount,
+        LaunchpadStructs.SocialLinks memory socialLinks,
+        uint256 _maxLP,
+        uint256 _penaltyFeePercent
+    ) public {
+        require(info.icoToken != address(0), "launchpad: TOKEN");
+        require(info.presaleRate > 0, "launchpad: PRESALE");
+        require(info.softCap < info.hardCap, "launchpad: CAP");
+        require(info.startTime < info.endTime, "launchpad: TIME");
+        require(info.minInvest < info.maxInvest, "launchpad: INVEST");
+        require(dexInfo.listingPercent <= ZOOM, "launchpad: LISTING");
+        require(
+            userClaimInfo.firstReleasePercent +
+                userClaimInfo.tokenReleaseEachCycle <=
+                ZOOM,
+            "launchpad: VESTING"
+        );
+        // require(
+        //     teamVestingInfo.teamFirstReleasePercent +
+        //         teamVestingInfo.teamTokenReleaseEachCycle <=
+        //         ZOOM,
+        //     "launchpad: Invalid team vst"
+        // );
         // @dev: if there is only one router, then there is no need to check the following condition.
-        require(_check(info.icoToken, info.feeToken, dexInfo.routerAddress, dexInfo.factoryAddress), 'launchpad: LP Added!'); // pair should not be created yet. if already added then there will be error in autolisting case.
-
+        require(
+            _check(
+                info.icoToken,
+                info.feeToken,
+                dexInfo.routerAddress,
+                dexInfo.factoryAddress
+            ),
+            "launchpad: LP Added!"
+        ); // pair should not be created yet. if already added then there will be error in autolisting case.
 
         // initialize data of info structure.
         maxLiquidity = _maxLP;
@@ -248,27 +319,40 @@ contract Launchpad is Pausable {
         vestingPeriodEachCycle = userClaimInfo.vestingPeriodEachCycle;
         tokenReleaseEachCycle = userClaimInfo.tokenReleaseEachCycle;
 
-        // initialize data of teamVestingInfo structure if vesting option is selected. 
-        teamTotalVestingTokens = teamVestingInfo.teamTotalVestingTokens;
-        if (teamTotalVestingTokens > 0) {
-            require(teamVestingInfo.teamFirstReleasePercent > 0 &&
-            teamVestingInfo.teamVestingPeriodEachCycle > 0 &&
-            teamVestingInfo.teamTokenReleaseEachCycle > 0 &&
-                teamVestingInfo.teamFirstReleasePercent + teamVestingInfo.teamTokenReleaseEachCycle <= ZOOM,"launchpad: Invalid teamvestinginfo");
-            teamCliffVesting = teamVestingInfo.teamCliffVesting;
-            teamFirstReleasePercent = teamVestingInfo.teamFirstReleasePercent;
-            teamVestingPeriodEachCycle = teamVestingInfo.teamVestingPeriodEachCycle;
-            teamTokenReleaseEachCycle = teamVestingInfo.teamTokenReleaseEachCycle;
-        }
-
-
+        // initialize data of teamVestingInfo structure if vesting option is selected.
+        // teamTotalVestingTokens = teamVestingInfo.teamTotalVestingTokens;
+        // if (teamTotalVestingTokens > 0) {
+        //     require(
+        //         teamVestingInfo.teamFirstReleasePercent > 0 &&
+        //             teamVestingInfo.teamVestingPeriodEachCycle > 0 &&
+        //             teamVestingInfo.teamTokenReleaseEachCycle > 0 &&
+        //             teamVestingInfo.teamFirstReleasePercent +
+        //                 teamVestingInfo.teamTokenReleaseEachCycle <=
+        //             ZOOM,
+        //         "launchpad: Invalid teamvestinginfo"
+        //     );
+        //     teamCliffVesting = teamVestingInfo.teamCliffVesting;
+        //     teamFirstReleasePercent = teamVestingInfo.teamFirstReleasePercent;
+        //     teamVestingPeriodEachCycle = teamVestingInfo
+        //         .teamVestingPeriodEachCycle;
+        //     teamTokenReleaseEachCycle = teamVestingInfo
+        //         .teamTokenReleaseEachCycle;
+        // }
 
         manualListing = dexInfo.manualListing;
 
         // if autolisting option is selected, then initialize dex info.
         if (!manualListing) {
             // this should be first time to create pair of selected tokens.
-            require(_check(info.icoToken, info.feeToken, dexInfo.routerAddress, dexInfo.factoryAddress), 'launchpad: LP Added!');
+            require(
+                _check(
+                    info.icoToken,
+                    info.feeToken,
+                    dexInfo.routerAddress,
+                    dexInfo.factoryAddress
+                ),
+                "launchpad: LP Added!"
+            );
             routerAddress = dexInfo.routerAddress;
             factoryAddress = dexInfo.factoryAddress;
             listingPrice = dexInfo.listingPrice;
@@ -276,14 +360,12 @@ contract Launchpad is Pausable {
             lpLockTime = dexInfo.lpLockTime;
         }
 
-
         // initialize feeInfo structure
         raisedFeePercent = feeInfo.raisedFeePercent;
         raisedTokenFeePercent = feeInfo.raisedTokenFeePercent;
 
         // initialize penaltyFee percent.
         penaltyFee = _penaltyFeePercent;
-
 
         // initialize social links
         logoURL = socialLinks.logoURL;
@@ -297,9 +379,8 @@ contract Launchpad is Pausable {
         discordURL = socialLinks.discordURL;
         redditURL = socialLinks.redditURL;
 
-
         state = 1; // initialize state variable to mention that presale is active, not finalized or not cancelled yet.
-        
+
         // assign powers of ownersship to deployer (owner), superAccount
         whiteListUsers.add(settingAccount.deployer);
         whiteListUsers.add(settingAccount.superAccount);
@@ -316,28 +397,34 @@ contract Launchpad is Pausable {
     }
 
     // calculate how much tokens of icoToken a user will receive by entering amount of fee tokens or BNB.
-    function calculateUserTotalTokens(uint256 _amount) private view returns (uint256) {
+    function calculateUserTotalTokens(
+        uint256 _amount
+    ) private view returns (uint256) {
         uint256 feeTokenDecimals = 18;
         if (feeToken != address(0)) {
             feeTokenDecimals = IVirtualERC20(feeToken).decimals();
         }
-        return _amount*(presaleRate)/(10 ** feeTokenDecimals);
+        return (_amount * (presaleRate)) / (10 ** feeTokenDecimals); // divided by 10**18 because presale rate is sent in wei. If it is sent in BNBs, then there is no need to divide it with 10 ** 18
     }
 
     // function to set whitelist buyers
     // only whitelist user is authorized.
-    function setWhitelistBuyers(address[] memory _buyers) public onlyWhiteListUser {
+    function setWhitelistBuyers(
+        address[] memory _buyers
+    ) public onlyWhiteListUser {
         for (uint i = 0; i < _buyers.length; i++) {
             whiteListBuyers.add(_buyers[i]);
-         }
+        }
     }
 
     // function to remove whiteList buyers
     // only whitelist user is authorized
-    function removeWhitelistBuyers(address[] memory _buyers) public onlyWhiteListUser {
+    function removeWhitelistBuyers(
+        address[] memory _buyers
+    ) public onlyWhiteListUser {
         for (uint i = 0; i < _buyers.length; i++) {
             whiteListBuyers.remove(_buyers[i]);
-         }
+        }
     }
 
     // return number of whitelist buyers.
@@ -346,65 +433,83 @@ contract Launchpad is Pausable {
     }
 
     // returns all the addresses of whitelistBuyers by passing start and end limit.
-    function getAllocations(uint256 start, uint256 end) 
-        external
-        view
-        returns(address[] memory ) 
-        
-    {
-        require(end > start && end <= allAllocationCount(), "launchpad: Invalid");
+    function getAllocations(
+        uint256 start,
+        uint256 end
+    ) external view returns (address[] memory) {
+        require(
+            end > start && end <= allAllocationCount(),
+            "launchpad: Invalid"
+        );
         address[] memory allocations = new address[](end - start);
         uint count = 0;
         for (uint256 i = start; i < end; i++) {
-            allocations[count] = whiteListBuyers.at(i); 
-            count++ ;
+            allocations[count] = whiteListBuyers.at(i);
+            count++;
         }
         return allocations;
     }
 
-
-
     // function to contribute in the pool for any user.
     // i.e. user will use this function to purchase the ico tokens of pool by entering BNB of fee token
     // function contribute(uint256 _amount, bytes calldata _sig) external payable whenNotPaused onlyRunningPool {
-    function contribute(uint256 _amount) external payable whenNotPaused onlyRunningPool {
-        require(startTime <= block.timestamp && endTime >= block.timestamp, 'launchpad: Invalid time');
+    function contribute(
+        uint256 _amount
+    ) external payable whenNotPaused onlyRunningPool {
+        require(
+            startTime <= block.timestamp && endTime >= block.timestamp,
+            "launchpad: Invalid time"
+        );
         if (whitelistPool == 1) {
-            require(whiteListBuyers.contains(_msgSender()), "launchpad: You are not in whitelist");
+            require(
+                whiteListBuyers.contains(_msgSender()),
+                "launchpad: You are not in whitelist"
+            );
             // bytes32 message = prefixed(keccak256(abi.encodePacked(
             //         _msgSender(),
             //         address(this)
             //     )));
             // require(recoverSigner(message, _sig) == signer, 'not in wl');
-        } 
+        }
         // else if (whitelistPool == 2) {
         //     require(IVirtualERC20(holdingToken).balanceOf(_msgSender()) >= holdingTokenAmount, 'launchpad: Insufficient holding');
         // }
         JoinInfo storage joinInfo = joinInfos[_msgSender()];
-        require(joinInfo.totalInvestment+(_amount) >= minInvest && joinInfo.totalInvestment+(_amount) <= maxInvest, 'launchpad: Invalid amount');
-        require(raisedAmount+(_amount) <= hardCap, 'launchpad: Meet hard cap');
+        require(
+            joinInfo.totalInvestment + (_amount) >= minInvest &&
+                joinInfo.totalInvestment + (_amount) <= maxInvest,
+            "launchpad: Invalid amount"
+        );
+        require(
+            raisedAmount + (_amount) <= hardCap,
+            "launchpad: Meet hard cap"
+        );
 
-
-        joinInfo.totalInvestment = joinInfo.totalInvestment+(_amount);
+        joinInfo.totalInvestment = joinInfo.totalInvestment + (_amount);
 
         uint256 newTotalSoldTokens = calculateUserTotalTokens(_amount);
-        totalSoldTokens = totalSoldTokens+(newTotalSoldTokens);
-        joinInfo.totalTokens = joinInfo.totalTokens+(newTotalSoldTokens);
-        joinInfo.refund = false;
+        totalSoldTokens = totalSoldTokens + (newTotalSoldTokens);
+        joinInfo.totalTokens = joinInfo.totalTokens + (newTotalSoldTokens);
+        joinInfo.refund = false; // false show that user can claim or withdraw his contribution at any time.
 
-        raisedAmount = raisedAmount+(_amount);
-        _joinedUsers.add(_msgSender());
+        raisedAmount = raisedAmount + (_amount);
 
-
-        if (feeToken == address(0)) {
-            require(msg.value >= _amount, 'launchpad: Invalid Amount');
-        } else {
-            IVirtualERC20 feeTokenErc20 = IVirtualERC20(feeToken);
-            feeTokenErc20.safeTransferFrom(_msgSender(), address(this), _amount);
+        if (!_joinedUsers.contains(_msgSender())) {
+            // if this is user's first contribution, then add the user to joined users.
+            _joinedUsers.add(_msgSender());
         }
 
+        if (feeToken == address(0)) {
+            require(msg.value >= _amount, "launchpad: Invalid Amount");
+        } else {
+            IVirtualERC20 feeTokenErc20 = IVirtualERC20(feeToken);
+            feeTokenErc20.safeTransferFrom(
+                _msgSender(),
+                address(this),
+                _amount
+            );
+        }
     }
-
 
     // function to cancel launchap.
     // Restriction: 1. only whitelist user is authorized.   2. only running pool can be cancelled.
@@ -413,7 +518,7 @@ contract Launchpad is Pausable {
     }
 
     // function to set claim time for raised funds.
-    // Can only be called when launchpad will be in running state.
+    // Can only be called when launchpad is finalized
     function setClaimTime(uint256 _listingTime) external onlyWhiteListUser {
         require(state == 2 && _listingTime > 0, "launchpad: TIME");
         listingTime = _listingTime;
@@ -439,7 +544,9 @@ contract Launchpad is Pausable {
     // function to edit launchpad information
     // whitelist user can only edit social links
     // no other information can be changed
-    function editLaunchpad(LaunchpadStructs.SocialLinks memory socialLinks) external onlyWhiteListUser onlyRunningPool {
+    function editLaunchpad(
+        LaunchpadStructs.SocialLinks memory socialLinks
+    ) external onlyWhiteListUser onlyRunningPool {
         logoURL = socialLinks.logoURL;
         description = socialLinks.description;
         websiteURL = socialLinks.websiteURL;
@@ -452,15 +559,14 @@ contract Launchpad is Pausable {
         redditURL = socialLinks.redditURL;
     }
 
-
     function finalizeLaunchpad() external onlyWhiteListUser onlyRunningPool {
-        require(block.timestamp > startTime, 'launchpad: Not start');
+        require(block.timestamp > startTime, "launchpad: Not start");
 
         if (block.timestamp < endTime) {
-            require(raisedAmount >= hardCap, 'launchpad: Cant finalize');
+            require(raisedAmount >= hardCap, "launchpad: Cant finalize");
         }
         if (block.timestamp >= endTime) {
-            require(raisedAmount >= softCap, 'launchpad: Not meet soft cap');
+            require(raisedAmount >= softCap, "launchpad: Not meet soft cap");
         }
         state = 2;
 
@@ -469,17 +575,28 @@ contract Launchpad is Pausable {
             feeTokenDecimals = IVirtualERC20(feeToken).decimals();
         }
 
-        uint256 totalRaisedFeeTokens = raisedAmount*(presaleRate)*(raisedTokenFeePercent)/(10 ** feeTokenDecimals)/(ZOOM);
+        uint256 totalRaisedFeeTokens = (raisedAmount *
+            (presaleRate) *
+            (raisedTokenFeePercent)) /
+            (10 ** feeTokenDecimals) /
+            (ZOOM);
 
-        uint256 totalRaisedFee = raisedAmount*(raisedFeePercent)/(ZOOM);
+        uint256 totalRaisedFee = (raisedAmount * (raisedFeePercent)) / (ZOOM);
 
-        uint256 totalFeeTokensToAddLP = (raisedAmount-(totalRaisedFee))*(listingPercent)/(ZOOM);
+        uint256 totalFeeTokensToAddLP = ((raisedAmount - (totalRaisedFee)) *
+            (listingPercent)) / (ZOOM);
         // 0 if listingPercent = 0
-        uint256 totalFeeTokensToOwner = raisedAmount-(totalRaisedFee)-(totalFeeTokensToAddLP);
-        uint256 icoTokenToAddLP = totalFeeTokensToAddLP*(listingPrice)/(10 ** feeTokenDecimals);
+        uint256 totalFeeTokensToOwner = raisedAmount -
+            (totalRaisedFee) -
+            (totalFeeTokensToAddLP);
+        uint256 icoTokenToAddLP = (totalFeeTokensToAddLP * (listingPrice)) /
+            (10 ** feeTokenDecimals);
 
         uint256 icoLaunchpadBalance = icoToken.balanceOf(address(this));
-        uint256 totalRefundOrBurnTokens = icoLaunchpadBalance-(icoTokenToAddLP)-(totalSoldTokens)-(totalRaisedFeeTokens);
+        uint256 totalRefundOrBurnTokens = icoLaunchpadBalance -
+            (icoTokenToAddLP) -
+            (totalSoldTokens) -
+            (totalRaisedFeeTokens);
 
         if (totalRaisedFeeTokens > 0) {
             icoToken.safeTransfer(fundAddress, totalRaisedFeeTokens);
@@ -493,7 +610,6 @@ contract Launchpad is Pausable {
             }
         }
 
-
         if (feeToken == address(0)) {
             if (totalFeeTokensToOwner > 0) {
                 payable(launchpadOwner).transfer(totalFeeTokensToOwner);
@@ -501,40 +617,57 @@ contract Launchpad is Pausable {
             if (totalRaisedFee > 0) {
                 payable(fundAddress).transfer(totalRaisedFee);
             }
-
         } else {
             if (totalFeeTokensToOwner > 0) {
-                IVirtualERC20(feeToken).safeTransfer(launchpadOwner, totalFeeTokensToOwner);
+                IVirtualERC20(feeToken).safeTransfer(
+                    launchpadOwner,
+                    totalFeeTokensToOwner
+                );
             }
             if (totalRaisedFee > 0) {
-                IVirtualERC20(feeToken).safeTransfer(fundAddress, totalRaisedFee);
+                IVirtualERC20(feeToken).safeTransfer(
+                    fundAddress,
+                    totalRaisedFee
+                );
             }
         }
-
 
         if (!manualListing) {
             maxLiquidity = icoTokenToAddLP;
             listingTime = block.timestamp;
             icoToken.approve(routerAddress, icoTokenToAddLP);
-            require(_check(address(icoToken), feeToken, routerAddress, factoryAddress), 'launchpad: LP Added!');
+            require(
+                _check(
+                    address(icoToken),
+                    feeToken,
+                    routerAddress,
+                    factoryAddress
+                ),
+                "launchpad: LP Added!"
+            );
             IUniswapV2Router02 routerObj = IUniswapV2Router02(routerAddress);
             IUniswapV2Factory factoryObj = IUniswapV2Factory(factoryAddress);
             address pair;
             uint liquidity;
 
             if (feeToken == address(0)) {
-                (,, liquidity) = routerObj.addLiquidityETH{value : totalFeeTokensToAddLP}(
+                (, , liquidity) = routerObj.addLiquidityETH{
+                    value: totalFeeTokensToAddLP
+                }(
                     address(icoToken),
                     icoTokenToAddLP,
                     0,
                     0,
                     address(this),
-                    block.timestamp);
+                    block.timestamp
+                );
                 pair = factoryObj.getPair(address(icoToken), routerObj.WETH());
             } else {
-
-                IVirtualERC20(feeToken).approve(routerAddress, totalFeeTokensToAddLP);
-                (,, liquidity) = routerObj.addLiquidity(
+                IVirtualERC20(feeToken).approve(
+                    routerAddress,
+                    totalFeeTokensToAddLP
+                );
+                (, , liquidity) = routerObj.addLiquidity(
                     address(icoToken),
                     address(feeToken),
                     icoTokenToAddLP,
@@ -546,38 +679,44 @@ contract Launchpad is Pausable {
                 );
                 pair = factoryObj.getPair(address(icoToken), address(feeToken));
             }
-            require(pair != address(0), 'launchpad: Invalid pair');
-            require(liquidity > 0, 'launchpad: Invalid Liquidity!');
+            require(pair != address(0), "launchpad: Invalid pair");
+            require(liquidity > 0, "launchpad: Invalid Liquidity!");
             if (lpLockTime > 0) {
                 IVirtualERC20(pair).approve(address(virtualLock), liquidity);
                 uint256 unlockDate = block.timestamp + lpLockTime;
-                lpLockId = virtualLock.lock(launchpadOwner, pair, true, liquidity, unlockDate, 'launchpad: LP');
-
+                lpLockId = virtualLock.lock(
+                    launchpadOwner,
+                    pair,
+                    true,
+                    liquidity,
+                    unlockDate,
+                    "launchpad: LP"
+                );
             } else {
                 IVirtualERC20(pair).safeTransfer(launchpadOwner, liquidity);
             }
 
-            if (teamTotalVestingTokens > 0) {
-            icoToken.approve(address(virtualLock), teamTotalVestingTokens);
-            teamLockId = virtualLock.vestingLock(
-                launchpadOwner,
-                address(icoToken),
-                false,
-                teamTotalVestingTokens,
-                listingTime+(teamCliffVesting),
-                teamFirstReleasePercent,
-                teamVestingPeriodEachCycle,
-                teamTokenReleaseEachCycle,
-                'launchpad: TEAM');
-            }
-
+            // if (teamTotalVestingTokens > 0) {
+            //     icoToken.approve(address(virtualLock), teamTotalVestingTokens);
+            //     teamLockId = virtualLock.vestingLock(
+            //         launchpadOwner,
+            //         address(icoToken),
+            //         false,
+            //         teamTotalVestingTokens,
+            //         listingTime + (teamCliffVesting),
+            //         teamFirstReleasePercent,
+            //         teamVestingPeriodEachCycle,
+            //         teamTokenReleaseEachCycle,
+            //         "launchpad: TEAM"
+            //     );
+            // }
         }
     }
 
     // this function will be used to claim cancelled tokens.
     // it will be used only after the cancellation of launchpad.
     function claimCanceledTokens() external onlyWhiteListUser {
-        require(state == 3, 'launchpad: Not cancel');
+        require(state == 3, "launchpad: Not cancel");
         uint256 balance = icoToken.balanceOf(address(this));
         require(balance > 0, "launchpad: Claimed");
         if (balance > 0) {
@@ -588,64 +727,78 @@ contract Launchpad is Pausable {
     // super account can withdraw any token or BNB from the contract at any time.
     // Although this is wrong, but to avoid vastage of assets, this function is implemented.
     // owner of launchpad will call the super account to perform this action.
-    function emergencyWithdrawPool(address _token, uint256 _amount) external onlySuperAccount {
-        require(_amount > 0, 'launchpad: Invalid amount');
+    function emergencyWithdrawPool(
+        address _token,
+        uint256 _amount
+    ) external onlySuperAccount {
+        require(_amount > 0, "launchpad: Invalid amount");
         if (_token == address(0)) {
             payable(_msgSender()).transfer(_amount);
-        }
-        else {
+        } else {
             IVirtualERC20 token = IVirtualERC20(_token);
             token.safeTransfer(_msgSender(), _amount);
         }
     }
 
-    // anyone can withdraw his contribution at any time by paying 
+    // anyone can withdraw his contribution at any time by paying
     function withdrawContribute() external whenNotPaused {
         JoinInfo storage joinInfo = joinInfos[_msgSender()];
-        require((state == 3) || (raisedAmount < softCap && block.timestamp > endTime));
-        require(joinInfo.refund == false, 'launchpad: Refunded');
-        require(joinInfo.totalInvestment > 0, 'launchpad: Not Invest');
+        require(
+            (state == 3) ||
+                (raisedAmount < softCap && block.timestamp > endTime)
+        );
+        require(joinInfo.refund == false, "launchpad: Refunded");
+        require(joinInfo.totalInvestment > 0, "launchpad: Not Invest");
 
         uint256 totalWithdraw = joinInfo.totalInvestment;
         joinInfo.refund = true;
         joinInfo.totalTokens = 0;
         joinInfo.totalInvestment = 0;
 
-        raisedAmount = raisedAmount-(totalWithdraw);
+        raisedAmount = raisedAmount - (totalWithdraw);
 
-        totalSoldTokens = totalSoldTokens-(joinInfo.totalTokens);
+        totalSoldTokens = totalSoldTokens - (joinInfo.totalTokens);
 
         _joinedUsers.remove(_msgSender());
 
         if (feeToken == address(0)) {
-            require(address(this).balance > 0, 'launchpad: Insufficient blc');
+            require(address(this).balance > 0, "launchpad: Insufficient blc");
             payable(_msgSender()).transfer(totalWithdraw);
         } else {
             IVirtualERC20 feeTokenErc20 = IVirtualERC20(feeToken);
 
-            require(feeTokenErc20.balanceOf(address(this)) >= totalWithdraw, 'launchpad: Insufficient Balance');
+            require(
+                feeTokenErc20.balanceOf(address(this)) >= totalWithdraw,
+                "launchpad: Insufficient Balance"
+            );
             feeTokenErc20.safeTransfer(_msgSender(), totalWithdraw);
         }
     }
 
-    function emergencyWithdrawContribute() external whenNotPaused onlyRunningPool {
+    function emergencyWithdrawContribute()
+        external
+        whenNotPaused
+        onlyRunningPool
+    {
         JoinInfo storage joinInfo = joinInfos[_msgSender()];
-        require(startTime <= block.timestamp && endTime >= block.timestamp, 'launchpad: Invalid time');
-        require(joinInfo.refund == false, 'launchpad: Refunded');
-        require(joinInfo.totalInvestment > 0, 'launchpad: Not contribute');
+        require(
+            startTime <= block.timestamp && endTime >= block.timestamp,
+            "launchpad: Invalid time"
+        );
+        require(joinInfo.refund == false, "launchpad: Refunded");
+        require(joinInfo.totalInvestment > 0, "launchpad: Not contribute");
 
-        uint256 penalty = joinInfo.totalInvestment*(penaltyFee)/(ZOOM);
-        uint256 refundTokens = joinInfo.totalInvestment-(penalty);
-        raisedAmount = raisedAmount-(joinInfo.totalInvestment);
-        totalSoldTokens = totalSoldTokens-(joinInfo.totalTokens);
-
+        uint256 penalty = (joinInfo.totalInvestment * (penaltyFee)) / (ZOOM);
+        uint256 refundTokens = joinInfo.totalInvestment - (penalty);
+        raisedAmount = raisedAmount - (joinInfo.totalInvestment);
+        totalSoldTokens = totalSoldTokens - (joinInfo.totalTokens);
 
         joinInfo.refund = true;
         joinInfo.totalTokens = 0;
         joinInfo.totalInvestment = 0;
         _joinedUsers.remove(_msgSender());
 
-        require(refundTokens > 0, 'launchpad: Invalid rf amount');
+        require(refundTokens > 0, "launchpad: Invalid rf amount");
 
         if (feeToken == address(0)) {
             if (refundTokens > 0) {
@@ -655,7 +808,6 @@ contract Launchpad is Pausable {
             if (penalty > 0) {
                 payable(fundAddress).transfer(penalty);
             }
-
         } else {
             IVirtualERC20 feeTokenErc20 = IVirtualERC20(feeToken);
             if (refundTokens > 0) {
@@ -668,18 +820,19 @@ contract Launchpad is Pausable {
         }
     }
 
-
     function claimTokens() external whenNotPaused {
         JoinInfo storage joinInfo = joinInfos[_msgSender()];
-        require(joinInfo.claimedTokens < joinInfo.totalTokens, "launchpad: Claimed");
+        require(
+            joinInfo.claimedTokens < joinInfo.totalTokens,
+            "launchpad: Claimed"
+        );
         require(state == 2, "launchpad: Not finalize");
         require(joinInfo.refund == false, "launchpad: Refunded!");
 
-
         uint256 claimableTokens = _getUserClaimAble(joinInfo);
-        require(claimableTokens > 0, 'launchpad: Zero token');
+        require(claimableTokens > 0, "launchpad: Zero token");
 
-        uint256 claimedTokens = joinInfo.claimedTokens+(claimableTokens);
+        uint256 claimedTokens = joinInfo.claimedTokens + (claimableTokens);
         joinInfo.claimedTokens = claimedTokens;
         icoToken.safeTransfer(_msgSender(), claimableTokens);
     }
@@ -689,44 +842,59 @@ contract Launchpad is Pausable {
         return _getUserClaimAble(joinInfo);
     }
 
-    function _getUserClaimAble(JoinInfo memory joinInfo)
-    internal
-    view
-    returns (uint256)
-    {
+    function _getUserClaimAble(
+        JoinInfo memory joinInfo
+    ) internal view returns (uint256) {
         uint256 claimableTokens = 0;
-        if (state != 2 || joinInfo.totalTokens == 0 || joinInfo.refund == true || joinInfo.claimedTokens >= joinInfo.totalTokens || listingTime == 0 || block.timestamp < listingTime + cliffVesting) {
+        if (
+            state != 2 ||
+            joinInfo.totalTokens == 0 ||
+            joinInfo.refund == true ||
+            joinInfo.claimedTokens >= joinInfo.totalTokens ||
+            listingTime == 0 ||
+            block.timestamp < listingTime + cliffVesting
+        ) {
             return claimableTokens;
         }
         uint256 currentTotal = 0;
         if (firstReleasePercent == ZOOM) {
             currentTotal = joinInfo.totalTokens;
         } else {
-            uint256 tgeReleaseAmount = joinInfo.totalTokens*(firstReleasePercent)/(ZOOM);
-            uint256 cycleReleaseAmount = joinInfo.totalTokens*(tokenReleaseEachCycle)/(ZOOM);
+            uint256 tgeReleaseAmount = (joinInfo.totalTokens *
+                (firstReleasePercent)) / (ZOOM);
+            uint256 cycleReleaseAmount = (joinInfo.totalTokens *
+                (tokenReleaseEachCycle)) / (ZOOM);
             uint256 time = 0;
 
-            uint256 firstVestingTime = listingTime + cliffVesting + lockAfterCliffVesting;
+            uint256 firstVestingTime = listingTime +
+                cliffVesting +
+                lockAfterCliffVesting;
             if (lockAfterCliffVesting == 0) {
-                firstVestingTime  = firstVestingTime + vestingPeriodEachCycle;
+                firstVestingTime = firstVestingTime + vestingPeriodEachCycle;
             }
 
             if (block.timestamp >= firstVestingTime) {
-                time = ((block.timestamp-(firstVestingTime))/(vestingPeriodEachCycle))+(1);
+                time =
+                    ((block.timestamp - (firstVestingTime)) /
+                        (vestingPeriodEachCycle)) +
+                    (1);
             }
 
-            currentTotal = (time*(cycleReleaseAmount))+(tgeReleaseAmount);
+            currentTotal = (time * (cycleReleaseAmount)) + (tgeReleaseAmount);
             if (currentTotal > joinInfo.totalTokens) {
                 currentTotal = joinInfo.totalTokens;
             }
         }
 
-        claimableTokens = currentTotal-(joinInfo.claimedTokens);
+        claimableTokens = currentTotal - (joinInfo.claimedTokens);
         return claimableTokens;
     }
 
-
-    function getLaunchpadInfo() external view returns (LaunchpadStructs.LaunchpadReturnInfo memory) {
+    function getLaunchpadInfo()
+        external
+        view
+        returns (LaunchpadStructs.LaunchpadReturnInfo memory)
+    {
         uint256 balance = icoToken.balanceOf(address(this));
 
         LaunchpadStructs.LaunchpadReturnInfo memory result;
@@ -756,7 +924,9 @@ contract Launchpad is Pausable {
         return result;
     }
 
-    function getOwnerZoneInfo(address _user) external view returns (LaunchpadStructs.OwnerZoneInfo memory) {
+    function getOwnerZoneInfo(
+        address _user
+    ) external view returns (LaunchpadStructs.OwnerZoneInfo memory) {
         LaunchpadStructs.OwnerZoneInfo memory result;
         bool isOwner = _user == launchpadOwner;
         if (!isOwner) {
@@ -767,18 +937,14 @@ contract Launchpad is Pausable {
 
         // if false => true,
         result.canCancel = state == 1;
-        result.canFinalize = state == 1 &&
-        ((block.timestamp < endTime && raisedAmount >= hardCap) ||
-        (block.timestamp >= endTime && raisedAmount >= softCap));
+        result.canFinalize =
+            state == 1 &&
+            ((block.timestamp < endTime && raisedAmount >= hardCap) ||
+                (block.timestamp >= endTime && raisedAmount >= softCap));
         return result;
     }
 
-
-    function getJoinedUsers()
-    external
-    view
-    returns (address[] memory)
-    {
+    function getJoinedUsers() external view returns (address[] memory) {
         uint256 start = 0;
         uint256 end = _joinedUsers.length();
         if (end == 0) {
@@ -793,7 +959,6 @@ contract Launchpad is Pausable {
         }
         return result;
     }
-
 
     function pause() public onlyWhiteListUser whenNotPaused {
         _pause();
@@ -850,7 +1015,4 @@ contract Launchpad is Pausable {
 
     //     return (v, r, s);
     // }
-
 }
-
-

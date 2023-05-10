@@ -119,7 +119,7 @@ contract LaunchpadFactory is Ownable {
     function deployLaunchpad(
         LaunchpadStructs.LaunchpadInfo memory info,
         LaunchpadStructs.ClaimInfo memory claimInfo,
-        LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,
+        // LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,
         LaunchpadStructs.DexInfo memory dexInfo,
         LaunchpadStructs.FeeSystem memory feeInfo,
         LaunchpadStructs.SocialLinks memory socialLinks
@@ -174,7 +174,7 @@ contract LaunchpadFactory is Ownable {
         ILaunchpad(launchpad).initialize(
             info,
             claimInfo,
-            teamVestingInfo,
+            // teamVestingInfo,
             dexInfo,
             feeInfo,
             settingAccount,
