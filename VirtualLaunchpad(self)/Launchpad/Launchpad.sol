@@ -116,8 +116,8 @@ contract Launchpad is Pausable {
     // uint256 public holdingTokenAmount;
 
     // contribute vesting
-    uint256 public cliffVesting; //First gap release after listing (minutes)
-    uint256 public lockAfterCliffVesting; //second gap release after cliff (minutes)
+    // uint256 public cliffVesting; //First gap release after listing (minutes)
+    // uint256 public lockAfterCliffVesting; //second gap release after cliff (minutes)
     uint256 public firstReleasePercent; // 0 is not vesting
     uint256 public vestingPeriodEachCycle; //0 is not vesting
     uint256 public tokenReleaseEachCycle; //percent: 0 is not vesting
@@ -313,8 +313,8 @@ contract Launchpad is Pausable {
         poolType = info.poolType;
 
         // initialize data of userClaimInfo structure.
-        cliffVesting = userClaimInfo.cliffVesting;
-        lockAfterCliffVesting = userClaimInfo.lockAfterCliffVesting;
+        // cliffVesting = userClaimInfo.cliffVesting;
+        // lockAfterCliffVesting = userClaimInfo.lockAfterCliffVesting;
         firstReleasePercent = userClaimInfo.firstReleasePercent;
         vestingPeriodEachCycle = userClaimInfo.vestingPeriodEachCycle;
         tokenReleaseEachCycle = userClaimInfo.tokenReleaseEachCycle;
@@ -852,7 +852,8 @@ contract Launchpad is Pausable {
             joinInfo.refund == true ||
             joinInfo.claimedTokens >= joinInfo.totalTokens ||
             listingTime == 0 ||
-            block.timestamp < listingTime + cliffVesting
+            // block.timestamp < listingTime + cliffVesting @dev: commented in this line and remove below line at the time of enabling cliff vesting option
+            block.timestamp < listingTime
         ) {
             return claimableTokens;
         }
@@ -866,12 +867,11 @@ contract Launchpad is Pausable {
                 (tokenReleaseEachCycle)) / (ZOOM);
             uint256 time = 0;
 
-            uint256 firstVestingTime = listingTime +
-                cliffVesting +
-                lockAfterCliffVesting;
-            if (lockAfterCliffVesting == 0) {
-                firstVestingTime = firstVestingTime + vestingPeriodEachCycle;
-            }
+            uint256 firstVestingTime = listingTime; 
+            // + cliffVesting + lockAfterCliffVesting; @dev: commented in this line and add this line at the start of above line
+            // if (lockAfterCliffVesting == 0) {
+            //     firstVestingTime = firstVestingTime + vestingPeriodEachCycle;
+            // }
 
             if (block.timestamp >= firstVestingTime) {
                 time =

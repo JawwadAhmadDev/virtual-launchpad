@@ -19,8 +19,8 @@ library LaunchpadStructs {
     }
 
     struct ClaimInfo {
-        uint256 cliffVesting; //First gap release after listing (minutes)
-        uint256 lockAfterCliffVesting; //second gap release after cliff (minutes)
+        // uint256 cliffVesting; //First gap release after listing (minutes)
+        // uint256 lockAfterCliffVesting; //second gap release after cliff (minutes)
         uint256 firstReleasePercent; // percent of tokens to be released first time.
         uint256 vestingPeriodEachCycle; // time of each cycle after first release
         uint256 tokenReleaseEachCycle; // percentage of tokens to be released on completion of each cycle.
