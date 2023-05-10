@@ -197,8 +197,9 @@ contract Launchpad is Pausable {
     //     signer = _signer;
     // }
 
-    function setPenaltyFee(uint256 _penaltyFee) public onlySuperAccount {
-        penaltyFee = _penaltyFee;
+    // super account is capable to change penalty fee for any launchpad.
+    function setPenaltyFeePercent(uint256 _penaltyFee) public onlySuperAccount {
+        penaltyFee = _penaltyFee * 100;
     }
 
 
@@ -207,11 +208,11 @@ contract Launchpad is Pausable {
         routerAddress = _router;
     }
 
-    constructor(LaunchpadStructs.LaunchpadInfo memory info, LaunchpadStructs.ClaimInfo memory userClaimInfo, LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,LaunchpadStructs.DexInfo memory dexInfo, LaunchpadStructs.FeeSystem memory feeInfo, LaunchpadStructs.SettingAccount memory settingAccount, LaunchpadStructs.SocialLinks memory socialLinks, uint256 _maxLP) {
-        initialize(info, userClaimInfo, teamVestingInfo, dexInfo, feeInfo, settingAccount, socialLinks, _maxLP);
+    constructor(LaunchpadStructs.LaunchpadInfo memory info, LaunchpadStructs.ClaimInfo memory userClaimInfo, LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,LaunchpadStructs.DexInfo memory dexInfo, LaunchpadStructs.FeeSystem memory feeInfo, LaunchpadStructs.SettingAccount memory settingAccount, LaunchpadStructs.SocialLinks memory socialLinks, uint256 _maxLP, uint256 _penaltyFeePercent) {
+        initialize(info, userClaimInfo, teamVestingInfo, dexInfo, feeInfo, settingAccount, socialLinks, _maxLP, _penaltyFeePercent);
     }
 
-    function initialize (LaunchpadStructs.LaunchpadInfo memory info, LaunchpadStructs.ClaimInfo memory userClaimInfo, LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,LaunchpadStructs.DexInfo memory dexInfo, LaunchpadStructs.FeeSystem memory feeInfo, LaunchpadStructs.SettingAccount memory settingAccount, LaunchpadStructs.SocialLinks memory socialLinks, uint256 _maxLP) 
+    function initialize (LaunchpadStructs.LaunchpadInfo memory info, LaunchpadStructs.ClaimInfo memory userClaimInfo, LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,LaunchpadStructs.DexInfo memory dexInfo, LaunchpadStructs.FeeSystem memory feeInfo, LaunchpadStructs.SettingAccount memory settingAccount, LaunchpadStructs.SocialLinks memory socialLinks, uint256 _maxLP, uint256 _penaltyFeePercent) 
     public 
     {
         require(info.icoToken != address(0), 'launchpad: TOKEN');
@@ -279,7 +280,9 @@ contract Launchpad is Pausable {
         // initialize feeInfo structure
         raisedFeePercent = feeInfo.raisedFeePercent;
         raisedTokenFeePercent = feeInfo.raisedTokenFeePercent;
-        penaltyFee = feeInfo.penaltyFee;
+
+        // initialize penaltyFee percent.
+        penaltyFee = _penaltyFeePercent;
 
 
         // initialize social links

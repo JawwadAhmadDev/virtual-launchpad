@@ -16,6 +16,7 @@ contract LaunchpadFactory is Ownable {
     uint256 public constant ZOOM = 10000;
 
     uint256 public flatFee; // fee that will be calculated on each launchpad creation
+    uint256 public penaltyFeePercent = 1000; // 10% // penalty that will be calculated on each emergency withdraw or cancellation the launchpad.
     // address public signer;
     address public superAccount;
     address public virtualLock;
@@ -73,6 +74,10 @@ contract LaunchpadFactory is Ownable {
 
     function setFlatFee(uint256 _flatFee) public onlyOwner {
         flatFee = _flatFee;
+    }
+
+    function setPenalyFeePercent(uint256 _penaltyFeePercent) public onlyOwner {
+        penaltyFeePercent = (_penaltyFeePercent) * 100; // due to ZOOM constant
     }
 
     function setImplementations(address _implementation) public onlyOwner {
@@ -174,7 +179,8 @@ contract LaunchpadFactory is Ownable {
             feeInfo,
             settingAccount,
             socialLinks,
-            maxLP
+            maxLP,
+            penaltyFeePercent
         );
         // LaunchpadV2 launchpad = new LaunchpadV2(info, claimInfo, teamVestingInfo, dexInfo, feeInfo, settingAccount, maxLP);
 
