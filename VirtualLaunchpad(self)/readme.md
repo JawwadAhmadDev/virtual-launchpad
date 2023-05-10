@@ -64,3 +64,27 @@ There are three states of a launchpad.
 By default the penalty fee is 10% set in each launchpad.
 ###: Note: In case of user willing to emergency withdraw his contribution before finalization of launchpad, the penalty fee will be deducted from his contribution and remains amount will be transferred back to the user.
 
+
+
+## Contribute Function: (Called by clicking on BUY button)
+### parameters: _amount
+    1. How much amount user is willing to exchange with ico tokens.
+    2. This amount will be sent in any case. either BNB or Fee Token.
+### Restrictions:
+    1. Time should be greater than start time and less than end time.
+    2. Check if whitelist is on, then only whitelist buyers can contribute.
+    3. Total investment of the caller should be greater than minimum investment limit and should be greater than maximum investment limit.
+    4. After investing _amount, total Raised amount should be less than or equal to hardcap.
+### Description:
+    1. add _amount to the total investment of the caller.
+    2. 
+
+
+## calculateUserTotalTokens(uint256 _amount): 
+### paramters: _amount
+    1. The amount of BNB or BUSD user want to excange.
+### Description:
+    1. This function will take amount of BNB or BUSD user want to exchange with ico token and returns the amount of ico tokens user will receive accordingly.
+    2. add amount to the totalRaisedAmount to track that how much amount collected by launchpad yet.
+    3. if this is users first contribution, then add user to the joinded users.
+
