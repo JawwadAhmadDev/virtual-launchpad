@@ -438,7 +438,7 @@ contract Launchpad is Pausable {
         uint256 end
     ) external view returns (address[] memory) {
         require(
-            end > start && end <= allAllocationCount(),
+            end > start && end <= getWhiteListBuyersCount(),
             "launchpad: Invalid"
         );
         address[] memory allocations = new address[](end - start);

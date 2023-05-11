@@ -7,7 +7,7 @@ interface ILaunchpad {
     function initialize(
         LaunchpadStructs.LaunchpadInfo memory info,
         LaunchpadStructs.ClaimInfo memory userClaimInfo,
-        LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,
+        // LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,
         LaunchpadStructs.DexInfo memory dexInfo,
         LaunchpadStructs.FeeSystem memory feeInfo,
         LaunchpadStructs.SettingAccount memory settingAccount,
