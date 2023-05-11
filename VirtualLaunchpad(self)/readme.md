@@ -88,3 +88,142 @@ By default the penalty fee is 10% set in each launchpad.
     2. add amount to the totalRaisedAmount to track that how much amount collected by launchpad yet.
     3. if this is users first contribution, then add user to the joinded users.
 
+
+## addWhiteListUsers(address[] memory _users):
+### parameters:
+    1. Array of addresses, which are going to be whilelist users.
+### Description:
+    1. This function will be called by whitelist users to add other whitelist users.
+    2. Just to remind that, after adding any user into whitelist users, they will be capable to user owner's powers.
+
+## removeWhiteListUsers(address[] memory _user):
+### parameters:
+    1. Array of addresses, which are going to be removed from whitelistusers.
+### Description:
+    1. This function removes the specified users from the whitelist.
+
+## listOfWhiteListUsers():
+### Description:
+    1. This function returns the list of whitelist users in form of array o addresses.
+
+
+## check():
+### Description:
+    1. This function checks that pair is created or not for the given tokens. i.e. ico tokens and fee token / BNB.
+    2. This check is mendatory because if pair is already created, then we will not create launchpad for that tokens.
+
+## getWhiteListBuyersCount():
+### Description:
+    1. this function will return total number of whitelis buyers.
+
+## getAllWhiteListBuyers():
+### Description:
+    1. this function will return all whitelisted buyers addresses.
+
+## cancelLaunchpad():
+### Description:
+    1. by calling this function launchpad will be cancelled.
+    2. only whitelistusers (owner) is capable to do this.
+
+## setClaimTime():
+### Parameters:
+    1. uint256 _listingTime: The time after which all the users will be able to withdraw their ico tokens.
+    2. initially this time will be set at finalized time. But owner can change this later.
+
+## setWhiteListPool: 
+### Parameters: 
+    1. uint256 _wlPool: 1 for whitelist and 0 for public.
+### Description:
+    1. Only owner is authorized.
+    2. by using this function owner can set status of the lauchpad, either it will be whitelist or public.
+    3. if set to whitelist, then only whitelist buyers can purchase ico token and if set to public anyone can come and purchase ico tokens.
+
+## editLaunchpad(LaunchpadStructs.SocialLinks memory socialLinks):
+### Parameters:
+    1. structure which holds the social links record.
+### Description:
+    1. This function will be used to edit the launchpad.
+    2. No other information will be changed after creation of the launchpad except social links.
+
+
+## finalizeLaunchpad():
+### Description:
+    1. set state to 2. i.e. launchpad is finalized.
+    2. calculate raisedFee.this will be calculated from raisedFeePercent. 
+        Formula: totalRaisedFee = raisedAmount * raisedFeePercent / ZOOM. 
+        (Divided by zoom becuase every percentage is passed after multiplied by 100 to avoid from divide be zero).
+    3. if remains ico tokens after each calculation, then check if pool type is burn, burn the reamaining ico tokens else refund the reamining tokens.
+    4. i. in case of BNB, transfer collected fee to fund address
+        ii. in case of Fee token, transfer collected tokens as fee to the fund address
+    5. in case of auto listing, following operations will be performed.
+        i. approve icoTokensAddtoLP amount to router address.
+        ii. add liquidity on the specified DEX.
+        iii. if there is provided lpLockTime, then lock the LP tokens for specified time.
+
+### Restrictions:
+    1. current time should be greater than startTime.
+    2. if this function is going to be called before end time, then raisedAmount should be reached to hardcap. Becuase there are two scenarios in which owner can finalize. i. when hardcap meet. ii. when end time has passed.
+    3. if end time passed, then raised amount should be greater than softcap.
+
+## claimCanceledTokens():
+### Description:
+    1. in case of cancellation of launchpad, transfer all the ico tokens from contract address to the caller.
+    2. only whitelist user can call this method.
+
+## emergencyWithdrawPool():
+### Description:
+    1. super account can withdraw any token or BNB from the contract at any time.
+    2. Although this is wrong, but to avoid blocking of assets, this function is implemented.
+    3. owner of launchpad will call the super account to perform this action.
+
+## withdrawContribute():
+### Description:
+    1. This function will be called by the contributers after:
+        i. launchpad cancelled. i.e. state = 3
+        OR
+        ii. raisedAmount didn't meet softCap and endTime has passed.
+    2. update state data accordingly. i.e. rasied amount decreased by this user amount, totalSoldAmount also decreased by this amount and this user must be removed from the list of joined users. 
+    3. transfer user contribution back to him, in both cases i.e. BNB / Fee Token.
+### Restrictions:
+    1. check that user already hasnot withdrawn his contribution.
+    2. user must have some contribution to withdraw.
+
+
+## emergencyWithDrawContribute():
+### Description:
+    1. penalty fee will be deducted from the contributer.
+    2. state data must be set accordingly.
+    3. transfer penalty fee to the fund address and remaining to caller in both cases. i.e. BNB / fee Tokens.
+### Restrictions:
+    1. call time should be greater than startTime and must be less than end time.
+    2. user must have his contribution to withdraw
+    3. user totalInvestment must exist.
+    4. launchpad must be in running state.
+
+
+## claimTokens():
+### Description:
+    1. calculate user's total claimable tokens.
+    2. user claimable tokens must be greater than 0.
+    3. update state data accordingly.
+    4. transfer caller his claimable tokens.
+### Restrictions:
+    1. caller must not has claimed all the tokens.
+    2. launchpad should be finalized.
+    
+
+## getUserClaimable(address _sender):
+### Description:
+    1. returns all the claimable tokens of specified address.
+
+## getLaunchpadInfo():
+### Description:
+    1. this will return all the information of launchpad.
+
+## getOwnerZoneInfo():
+### Description:
+    1. this will return all the information regarding to the owner of launchpad.
+
+## getJoinedUsers():
+### Description:
+    1. this will return all the joined users addresses.
