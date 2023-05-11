@@ -428,12 +428,12 @@ contract Launchpad is Pausable {
     }
 
     // return number of whitelist buyers.
-    function allAllocationCount() public view returns (uint256) {
+    function getWhiteListBuyersCount() public view returns (uint256) {
         return whiteListBuyers.length();
     }
 
     // returns all the addresses of whitelistBuyers by passing start and end limit.
-    function getAllocations(
+    function getAllWhiteListBuyers(
         uint256 start,
         uint256 end
     ) external view returns (address[] memory) {
@@ -563,7 +563,7 @@ contract Launchpad is Pausable {
         require(block.timestamp > startTime, "launchpad: Not start");
 
         if (block.timestamp < endTime) {
-            require(raisedAmount >= hardCap, "launchpad: Cant finalize");
+            require(raisedAmount >= hardCap, "launchpad: Can't finalize");
         }
         if (block.timestamp >= endTime) {
             require(raisedAmount >= softCap, "launchpad: Not meet soft cap");
@@ -659,7 +659,7 @@ contract Launchpad is Pausable {
                     0,
                     0,
                     address(this),
-                    block.timestamp
+                    block.timestamp + 5 minutes
                 );
                 pair = factoryObj.getPair(address(icoToken), routerObj.WETH());
             } else {
@@ -675,7 +675,7 @@ contract Launchpad is Pausable {
                     0,
                     0,
                     address(this),
-                    block.timestamp
+                    block.timestamp + 5 minutes
                 );
                 pair = factoryObj.getPair(address(icoToken), address(feeToken));
             }
@@ -725,7 +725,7 @@ contract Launchpad is Pausable {
     }
 
     // super account can withdraw any token or BNB from the contract at any time.
-    // Although this is wrong, but to avoid vastage of assets, this function is implemented.
+    // Although this is wrong, but to avoid blocking of assets, this function is implemented.
     // owner of launchpad will call the super account to perform this action.
     function emergencyWithdrawPool(
         address _token,
@@ -740,7 +740,8 @@ contract Launchpad is Pausable {
         }
     }
 
-    // anyone can withdraw his contribution at any time by paying
+    // anyone can withdraw his contribution
+    // this function can only be called when launchpad is cancelled or (raisedAmount doesn't meet the minimum criteria and end time passed.)
     function withdrawContribute() external whenNotPaused {
         JoinInfo storage joinInfo = joinInfos[_msgSender()];
         require(
@@ -775,6 +776,9 @@ contract Launchpad is Pausable {
         }
     }
 
+
+    // anyone can withdraw his contribution from lauchpad at any time.
+    // this function can only be called when launchpad is start and endTime doesn't passed. 
     function emergencyWithdrawContribute()
         external
         whenNotPaused
@@ -820,6 +824,9 @@ contract Launchpad is Pausable {
         }
     }
 
+
+
+    // this function is called by the user to claim his ico tokens.
     function claimTokens() external whenNotPaused {
         JoinInfo storage joinInfo = joinInfos[_msgSender()];
         require(
@@ -837,11 +844,14 @@ contract Launchpad is Pausable {
         icoToken.safeTransfer(_msgSender(), claimableTokens);
     }
 
+
+    // function to get all the claimable tokens of given address.
     function getUserClaimAble(address _sender) external view returns (uint256) {
         JoinInfo storage joinInfo = joinInfos[_sender];
         return _getUserClaimAble(joinInfo);
     }
 
+    // internal function to calculate user's claimable tokens yet.
     function _getUserClaimAble(
         JoinInfo memory joinInfo
     ) internal view returns (uint256) {
@@ -890,6 +900,7 @@ contract Launchpad is Pausable {
         return claimableTokens;
     }
 
+    // function to get launchpad info.
     function getLaunchpadInfo()
         external
         view
@@ -924,6 +935,8 @@ contract Launchpad is Pausable {
         return result;
     }
 
+
+    // this will return launchpad info of the owner of the launchpad.
     function getOwnerZoneInfo(
         address _user
     ) external view returns (LaunchpadStructs.OwnerZoneInfo memory) {
@@ -944,6 +957,8 @@ contract Launchpad is Pausable {
         return result;
     }
 
+
+    // function get joined users addresses.
     function getJoinedUsers() external view returns (address[] memory) {
         uint256 start = 0;
         uint256 end = _joinedUsers.length();
