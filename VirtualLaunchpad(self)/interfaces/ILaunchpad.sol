@@ -12,7 +12,8 @@ interface ILaunchpad {
         LaunchpadStructs.FeeSystem memory feeInfo,
         LaunchpadStructs.SettingAccount memory settingAccount,
         LaunchpadStructs.SocialLinks memory socialLinks,
-        uint256 _maxLP
+        uint256 _maxLP,
+        uint256 _penaltyFeePercent
     ) external;
 
     function getLaunchpadInfo()
