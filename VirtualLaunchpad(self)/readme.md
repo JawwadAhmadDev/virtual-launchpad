@@ -13,8 +13,8 @@ Parameters for calculate tokens: ["0x0000000000000000000000000000000000000000", 
                                  [FeeToken,presaleRate,hardcap,feeTokenRaisedPercent,raisedFeePercent,ListingPercent,ListingRate]
 
 VirtualLaunchpad: [https://testnet.bscscan.com/address/0x70a101614309d45f9449e0dfbeb9f781a7b4aa06#code]
-VirtualLock: [https://testnet.bscscan.com/address/0xaa388675726517982b36883f55d2fde1b270862f#code]
 LauchpadFactory: [https://testnet.bscscan.com/address/0x4eba392e3a87cc14c8142d3157e6e2bd76a4e7d7#code]
+VirtualLock: [https://testnet.bscscan.com/address/0xaa388675726517982b36883f55d2fde1b270862f#code]
 
 
 
