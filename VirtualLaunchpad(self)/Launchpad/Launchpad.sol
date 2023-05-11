@@ -118,7 +118,7 @@ contract Launchpad is Pausable {
     // contribute vesting
     // uint256 public cliffVesting; //First gap release after listing (minutes)
     // uint256 public lockAfterCliffVesting; //second gap release after cliff (minutes)
-    uint256 public firstReleasePercent; // 0 is not vesting
+    uint256 public firstReleasePercent; // 0 is not vesting // initially 10000 will be stored
     uint256 public vestingPeriodEachCycle; //0 is not vesting
     uint256 public tokenReleaseEachCycle; //percent: 0 is not vesting
 
@@ -868,7 +868,8 @@ contract Launchpad is Pausable {
             return claimableTokens;
         }
         uint256 currentTotal = 0;
-        if (firstReleasePercent == ZOOM) {
+        // if (firstReleasePercent == ZOOM) {
+        if (firstReleasePercent == 0) {
             currentTotal = joinInfo.totalTokens;
         } else {
             uint256 tgeReleaseAmount = (joinInfo.totalTokens *
