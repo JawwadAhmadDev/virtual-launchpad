@@ -933,6 +933,17 @@ contract Launchpad is Pausable {
         result.discordURL = discordURL;
         result.redditURL = redditURL;
 
+        result.icoToken = address(icoToken);
+        result.firstReleasePercent = firstReleasePercent;
+        result.listingPercent = listingPercent;
+        result.listingPrice = listingPrice;
+        result.lpLockTime = lpLockTime;
+        result.maxInvest = maxInvest;
+        result.minInvest = minInvest;
+        result.maxLiquidity = maxLiquidity;
+        result.presaleRate = presaleRate;
+        result.totalSoldTokens = totalSoldTokens;
+        result.manualListing = manualListing;
         return result;
     }
 

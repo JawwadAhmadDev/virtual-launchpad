@@ -64,6 +64,18 @@ library LaunchpadStructs {
         string instagramURL;
         string discordURL;
         string redditURL;
+
+        address icoToken;
+        uint256 firstReleasePercent;
+        uint256 listingPercent;
+        uint256 listingPrice;
+        uint256 lpLockTime;
+        uint256 maxInvest;
+        uint256 minInvest;
+        uint256 maxLiquidity;
+        uint256 presaleRate;
+        uint256 totalSoldTokens;
+        bool manualListing;
     }
 
     struct OwnerZoneInfo { // this structure is designed to show owner's informations
