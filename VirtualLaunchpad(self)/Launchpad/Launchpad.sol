@@ -170,7 +170,7 @@ contract Launchpad is Pausable {
     address payable public fundAddress;
     uint256 public totalSoldTokens; // how much tokens of ICO tokens sold yet.
 
-    address public deadAddress = address(0x0000dead);
+    address public deadAddress = 0x000000000000000000000000000000000000dEaD;
     uint256 public maxLiquidity = 0;
 
     // structure to hold the investment details of a specific user.

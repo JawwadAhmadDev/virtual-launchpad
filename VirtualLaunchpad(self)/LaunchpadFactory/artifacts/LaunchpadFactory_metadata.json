@@ -1,0 +1,630 @@
+{
+	"compiler": {
+		"version": "0.8.18+commit.87f61d96"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_superAccount",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_virtualLock",
+						"type": "address"
+					},
+					{
+						"internalType": "address payable",
+						"name": "_fundAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_implementation",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "launchpad",
+						"type": "address"
+					}
+				],
+				"name": "NewLaunchpad",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "previousOwner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "OwnershipTransferred",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "ZOOM",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "allLaunchpads",
+				"outputs": [
+					{
+						"internalType": "contract ILaunchpad",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "feeToken",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "presaleRate",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "hardCap",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "raisedTokenFeePercent",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "raisedFeePercent",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "listingPercent",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "listingPrice",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct LaunchpadStructs.CalculateTokenInput",
+						"name": "input",
+						"type": "tuple"
+					}
+				],
+				"name": "calculateTokens",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "icoToken",
+								"type": "address"
+							},
+							{
+								"internalType": "address",
+								"name": "feeToken",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "softCap",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "hardCap",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "presaleRate",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "minInvest",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "maxInvest",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "startTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "endTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "whitelistPool",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "poolType",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct LaunchpadStructs.LaunchpadInfo",
+						"name": "info",
+						"type": "tuple"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "firstReleasePercent",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "vestingPeriodEachCycle",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "tokenReleaseEachCycle",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct LaunchpadStructs.ClaimInfo",
+						"name": "claimInfo",
+						"type": "tuple"
+					},
+					{
+						"components": [
+							{
+								"internalType": "bool",
+								"name": "manualListing",
+								"type": "bool"
+							},
+							{
+								"internalType": "address",
+								"name": "routerAddress",
+								"type": "address"
+							},
+							{
+								"internalType": "address",
+								"name": "factoryAddress",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "listingPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "listingPercent",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "lpLockTime",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct LaunchpadStructs.DexInfo",
+						"name": "dexInfo",
+						"type": "tuple"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "raisedFeePercent",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "raisedTokenFeePercent",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct LaunchpadStructs.FeeSystem",
+						"name": "feeInfo",
+						"type": "tuple"
+					},
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "logoURL",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "description",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "websiteURL",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "facebookURL",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "twitterURL",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "githubURL",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "telegramURL",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "instagramURL",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "discordURL",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "redditURL",
+								"type": "string"
+							}
+						],
+						"internalType": "struct LaunchpadStructs.SocialLinks",
+						"name": "socialLinks",
+						"type": "tuple"
+					}
+				],
+				"name": "deployLaunchpad",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "flatFee",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "fundAddress",
+				"outputs": [
+					{
+						"internalType": "address payable",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "implementation",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "penaltyFeePercent",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "renounceOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_flatFee",
+						"type": "uint256"
+					}
+				],
+				"name": "setFlatFee",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address payable",
+						"name": "_fundAddress",
+						"type": "address"
+					}
+				],
+				"name": "setFundAddress",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_implementation",
+						"type": "address"
+					}
+				],
+				"name": "setImplementations",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_penaltyFeePercent",
+						"type": "uint256"
+					}
+				],
+				"name": "setPenalyFeePercent",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_superAccount",
+						"type": "address"
+					}
+				],
+				"name": "setSuperAccount",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_virtualLock",
+						"type": "address"
+					}
+				],
+				"name": "setVirtualLock",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "superAccount",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "totalLaunchpads",
+				"outputs": [
+					{
+						"internalType": "contract ILaunchpad[]",
+						"name": "launchpads",
+						"type": "address[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_user",
+						"type": "address"
+					}
+				],
+				"name": "totalLaunchpadsByUser",
+				"outputs": [
+					{
+						"internalType": "contract ILaunchpad[]",
+						"name": "launchpadsByUser",
+						"type": "address[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "transferOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "virtualLock",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {
+				"owner()": {
+					"details": "Returns the address of the current owner."
+				},
+				"renounceOwnership()": {
+					"details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+				},
+				"transferOwnership(address)": {
+					"details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+				}
+			},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"LaunchpadFactory/LaunchpadFactory_flattened.sol": "LaunchpadFactory"
+		},
+		"evmVersion": "paris",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"LaunchpadFactory/LaunchpadFactory_flattened.sol": {
+			"keccak256": "0x85ed193ca27044e31d56a8a3ae4416a758732991810a9ec0f554b6039aac84b6",
+			"urls": [
+				"bzz-raw://d985777e7ee4709eee2158b92470c74d4ba6958ebe375a51a97047639d2505a5",
+				"dweb:/ipfs/QmNZe4BVTdb6RJKGEypRx5RaxiudHExDskxPozPjnBLRdi"
+			]
+		}
+	},
+	"version": 1
+}

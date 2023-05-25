@@ -1,0 +1,45 @@
+{
+	"compiler": {
+		"version": "0.8.18+commit.87f61d96"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [],
+		"devdoc": {
+			"details": "https://eips.ethereum.org/EIPS/eip-1167[EIP 1167] is a standard for deploying minimal proxy contracts, also known as \"clones\". > To simply and cheaply clone contract functionality in an immutable way, this standard specifies > a minimal bytecode implementation that delegates all calls to a known, fixed address. The library includes functions to deploy a proxy using either `create` (traditional deployment) or `create2` (salted deterministic deployment). It also includes functions to predict the addresses of clones deployed using the deterministic method. _Available since v3.4._",
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"LaunchpadFactory/LaunchpadFactory_flattened.sol": "Clones"
+		},
+		"evmVersion": "paris",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"LaunchpadFactory/LaunchpadFactory_flattened.sol": {
+			"keccak256": "0x85ed193ca27044e31d56a8a3ae4416a758732991810a9ec0f554b6039aac84b6",
+			"urls": [
+				"bzz-raw://d985777e7ee4709eee2158b92470c74d4ba6958ebe375a51a97047639d2505a5",
+				"dweb:/ipfs/QmNZe4BVTdb6RJKGEypRx5RaxiudHExDskxPozPjnBLRdi"
+			]
+		}
+	},
+	"version": 1
+}

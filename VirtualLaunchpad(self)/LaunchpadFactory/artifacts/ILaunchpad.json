@@ -1,0 +1,524 @@
+{
+	"deploy": {
+		"VM:-": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"main:1": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"ropsten:3": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"rinkeby:4": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"kovan:42": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"goerli:5": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"Custom": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		}
+	},
+	"data": {
+		"bytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"linkReferences": {},
+			"object": "",
+			"opcodes": "",
+			"sourceMap": ""
+		},
+		"deployedBytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"immutableReferences": {},
+			"linkReferences": {},
+			"object": "",
+			"opcodes": "",
+			"sourceMap": ""
+		},
+		"gasEstimates": null,
+		"methodIdentifiers": {
+			"getJoinedUsers()": "ae959e71",
+			"getLaunchpadInfo()": "27b12bb2",
+			"getOwnerZoneInfo(address)": "26009dca",
+			"initialize((address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(uint256,uint256,uint256),(bool,address,address,uint256,uint256,uint256),(uint256,uint256),(address,address,address,address),(string,string,string,string,string,string,string,string,string,string),uint256,uint256)": "57801e6f"
+		}
+	},
+	"abi": [
+		{
+			"inputs": [],
+			"name": "getJoinedUsers",
+			"outputs": [
+				{
+					"internalType": "address[]",
+					"name": "",
+					"type": "address[]"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "getLaunchpadInfo",
+			"outputs": [
+				{
+					"components": [
+						{
+							"internalType": "uint256",
+							"name": "softCap",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "hardCap",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "startTime",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "endTime",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "state",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "raisedAmount",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "balance",
+							"type": "uint256"
+						},
+						{
+							"internalType": "address",
+							"name": "feeToken",
+							"type": "address"
+						},
+						{
+							"internalType": "uint256",
+							"name": "listingTime",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "whitelistPool",
+							"type": "uint256"
+						},
+						{
+							"internalType": "string",
+							"name": "logoURL",
+							"type": "string"
+						},
+						{
+							"internalType": "string",
+							"name": "description",
+							"type": "string"
+						},
+						{
+							"internalType": "string",
+							"name": "websiteURL",
+							"type": "string"
+						},
+						{
+							"internalType": "string",
+							"name": "facebookURL",
+							"type": "string"
+						},
+						{
+							"internalType": "string",
+							"name": "twitterURL",
+							"type": "string"
+						},
+						{
+							"internalType": "string",
+							"name": "githubURL",
+							"type": "string"
+						},
+						{
+							"internalType": "string",
+							"name": "telegramURL",
+							"type": "string"
+						},
+						{
+							"internalType": "string",
+							"name": "instagramURL",
+							"type": "string"
+						},
+						{
+							"internalType": "string",
+							"name": "discordURL",
+							"type": "string"
+						},
+						{
+							"internalType": "string",
+							"name": "redditURL",
+							"type": "string"
+						},
+						{
+							"internalType": "address",
+							"name": "icoToken",
+							"type": "address"
+						},
+						{
+							"internalType": "uint256",
+							"name": "firstReleasePercent",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "listingPercent",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "listingPrice",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "lpLockTime",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "maxInvest",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "minInvest",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "maxLiquidity",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "presaleRate",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "totalSoldTokens",
+							"type": "uint256"
+						},
+						{
+							"internalType": "bool",
+							"name": "manualListing",
+							"type": "bool"
+						}
+					],
+					"internalType": "struct LaunchpadStructs.LaunchpadReturnInfo",
+					"name": "",
+					"type": "tuple"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_user",
+					"type": "address"
+				}
+			],
+			"name": "getOwnerZoneInfo",
+			"outputs": [
+				{
+					"components": [
+						{
+							"internalType": "bool",
+							"name": "isOwner",
+							"type": "bool"
+						},
+						{
+							"internalType": "uint256",
+							"name": "whitelistPool",
+							"type": "uint256"
+						},
+						{
+							"internalType": "bool",
+							"name": "canFinalize",
+							"type": "bool"
+						},
+						{
+							"internalType": "bool",
+							"name": "canCancel",
+							"type": "bool"
+						}
+					],
+					"internalType": "struct LaunchpadStructs.OwnerZoneInfo",
+					"name": "",
+					"type": "tuple"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"components": [
+						{
+							"internalType": "address",
+							"name": "icoToken",
+							"type": "address"
+						},
+						{
+							"internalType": "address",
+							"name": "feeToken",
+							"type": "address"
+						},
+						{
+							"internalType": "uint256",
+							"name": "softCap",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "hardCap",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "presaleRate",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "minInvest",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "maxInvest",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "startTime",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "endTime",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "whitelistPool",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "poolType",
+							"type": "uint256"
+						}
+					],
+					"internalType": "struct LaunchpadStructs.LaunchpadInfo",
+					"name": "info",
+					"type": "tuple"
+				},
+				{
+					"components": [
+						{
+							"internalType": "uint256",
+							"name": "firstReleasePercent",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "vestingPeriodEachCycle",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "tokenReleaseEachCycle",
+							"type": "uint256"
+						}
+					],
+					"internalType": "struct LaunchpadStructs.ClaimInfo",
+					"name": "userClaimInfo",
+					"type": "tuple"
+				},
+				{
+					"components": [
+						{
+							"internalType": "bool",
+							"name": "manualListing",
+							"type": "bool"
+						},
+						{
+							"internalType": "address",
+							"name": "routerAddress",
+							"type": "address"
+						},
+						{
+							"internalType": "address",
+							"name": "factoryAddress",
+							"type": "address"
+						},
+						{
+							"internalType": "uint256",
+							"name": "listingPrice",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "listingPercent",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "lpLockTime",
+							"type": "uint256"
+						}
+					],
+					"internalType": "struct LaunchpadStructs.DexInfo",
+					"name": "dexInfo",
+					"type": "tuple"
+				},
+				{
+					"components": [
+						{
+							"internalType": "uint256",
+							"name": "raisedFeePercent",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "raisedTokenFeePercent",
+							"type": "uint256"
+						}
+					],
+					"internalType": "struct LaunchpadStructs.FeeSystem",
+					"name": "feeInfo",
+					"type": "tuple"
+				},
+				{
+					"components": [
+						{
+							"internalType": "address",
+							"name": "deployer",
+							"type": "address"
+						},
+						{
+							"internalType": "address",
+							"name": "superAccount",
+							"type": "address"
+						},
+						{
+							"internalType": "address payable",
+							"name": "fundAddress",
+							"type": "address"
+						},
+						{
+							"internalType": "address",
+							"name": "virtualLock",
+							"type": "address"
+						}
+					],
+					"internalType": "struct LaunchpadStructs.SettingAccount",
+					"name": "settingAccount",
+					"type": "tuple"
+				},
+				{
+					"components": [
+						{
+							"internalType": "string",
+							"name": "logoURL",
+							"type": "string"
+						},
+						{
+							"internalType": "string",
+							"name": "description",
+							"type": "string"
+						},
+						{
+							"internalType": "string",
+							"name": "websiteURL",
+							"type": "string"
+						},
+						{
+							"internalType": "string",
+							"name": "facebookURL",
+							"type": "string"
+						},
+						{
+							"internalType": "string",
+							"name": "twitterURL",
+							"type": "string"
+						},
+						{
+							"internalType": "string",
+							"name": "githubURL",
+							"type": "string"
+						},
+						{
+							"internalType": "string",
+							"name": "telegramURL",
+							"type": "string"
+						},
+						{
+							"internalType": "string",
+							"name": "instagramURL",
+							"type": "string"
+						},
+						{
+							"internalType": "string",
+							"name": "discordURL",
+							"type": "string"
+						},
+						{
+							"internalType": "string",
+							"name": "redditURL",
+							"type": "string"
+						}
+					],
+					"internalType": "struct LaunchpadStructs.SocialLinks",
+					"name": "socialLinks",
+					"type": "tuple"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_maxLP",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_penaltyFeePercent",
+					"type": "uint256"
+				}
+			],
+			"name": "initialize",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		}
+	]
+}
