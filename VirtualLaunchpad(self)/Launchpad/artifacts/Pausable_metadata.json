@@ -89,11 +89,11 @@
 	},
 	"sources": {
 		"Launchpad/Launchpad_flattened.sol": {
-			"keccak256": "0x00527e5c32d05d4e4fc05383db9767ab9bf200186dad154b080446e67fc2123d",
+			"keccak256": "0xefddf24fa59387094b80a59cd0efafa11c08f74a62601d013e8ea2c3be61d045",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://1c27ffc45670560d847279e75d4c8a8e5ea95ab35de52ff153ef2926ad74bd55",
-				"dweb:/ipfs/Qmbx9SCf2jBcKPUm1W91cvuwMroAeMre2wrmqHx5qmLXYf"
+				"bzz-raw://1bbdcaf98b1253a95c1cd593fdf72dfea509a70f453a09af06e5b02360b65584",
+				"dweb:/ipfs/QmcKmJitXkXfdRDrdFjgvoeAvcaaLRA4o4A4m39NneLUsS"
 			]
 		}
 	},

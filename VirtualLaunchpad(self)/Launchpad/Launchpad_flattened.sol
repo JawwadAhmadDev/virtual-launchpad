@@ -1586,7 +1586,7 @@ contract Launchpad is Pausable {
     address payable public fundAddress;
     uint256 public totalSoldTokens; // how much tokens of ICO tokens sold yet.
 
-    address public deadAddress = 0x000000000000000000000000000000000000dEaD;
+    address public deadAddress;
     uint256 public maxLiquidity = 0;
 
     // structure to hold the investment details of a specific user.
@@ -1714,6 +1714,8 @@ contract Launchpad is Pausable {
             "launchpad: LP Added!"
         ); // pair should not be created yet. if already added then there will be error in autolisting case.
 
+        deadAddress = 0x000000000000000000000000000000000000dEaD;
+        
         // initialize data of info structure.
         maxLiquidity = _maxLP;
         icoToken = IVirtualERC20(info.icoToken);

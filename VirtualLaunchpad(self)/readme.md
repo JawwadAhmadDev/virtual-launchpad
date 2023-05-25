@@ -12,9 +12,9 @@ maxLP: 50000000000000000000
 Parameters for calculate tokens: ["0x0000000000000000000000000000000000000000", "100000000000000000000" , "4000000000000000000", 0, 500, 6000, "50000000000000000000"]
                                  [FeeToken,presaleRate,hardcap,feeTokenRaisedPercent,raisedFeePercent,ListingPercent,ListingRate]
 
-VirtualLaunchpad: [https://testnet.bscscan.com/address/0x8d52f1e1fee89872886e05356e64543f268b7263#code]
+VirtualLaunchpad: [https://testnet.bscscan.com/address/0x2ca8667004e3feada6f6250557f014779d739f9a#code]
 VirtualLock: [https://testnet.bscscan.com/address/0xaa388675726517982b36883f55d2fde1b270862f#code]
-LauchpadFactory: [https://testnet.bscscan.com/address/0x08ebd2108f908414814bd1d54cf104c608aefb63#code]
+LauchpadFactory: [https://testnet.bscscan.com/address/0x68bd67c4c6269f44df54c5f4900d98c11b77bd6d#code]
 
 
 
