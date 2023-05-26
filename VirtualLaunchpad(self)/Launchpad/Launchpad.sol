@@ -170,7 +170,7 @@ contract Launchpad is Pausable {
     address payable public fundAddress;
     uint256 public totalSoldTokens; // how much tokens of ICO tokens sold yet.
 
-    address public deadAddress = 0x000000000000000000000000000000000000dEaD;
+    address public deadAddress;
     uint256 public maxLiquidity = 0;
 
     // structure to hold the investment details of a specific user.
@@ -235,27 +235,27 @@ contract Launchpad is Pausable {
     }
 
     constructor(
-        LaunchpadStructs.LaunchpadInfo memory info,
-        LaunchpadStructs.ClaimInfo memory userClaimInfo,
+        // LaunchpadStructs.LaunchpadInfo memory info,
+        // LaunchpadStructs.ClaimInfo memory userClaimInfo,
         // LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,
-        LaunchpadStructs.DexInfo memory dexInfo,
-        LaunchpadStructs.FeeSystem memory feeInfo,
-        LaunchpadStructs.SettingAccount memory settingAccount,
-        LaunchpadStructs.SocialLinks memory socialLinks,
-        uint256 _maxLP,
-        uint256 _penaltyFeePercent
+        // LaunchpadStructs.DexInfo memory dexInfo,
+        // LaunchpadStructs.FeeSystem memory feeInfo,
+        // LaunchpadStructs.SettingAccount memory settingAccount,
+        // LaunchpadStructs.SocialLinks memory socialLinks,
+        // uint256 _maxLP,
+        // uint256 _penaltyFeePercent
     ) {
-        initialize(
-            info,
-            userClaimInfo,
-            // teamVestingInfo,
-            dexInfo,
-            feeInfo,
-            settingAccount,
-            socialLinks,
-            _maxLP,
-            _penaltyFeePercent
-        );
+        // initialize(
+        //     info,
+        //     userClaimInfo,
+        //     // teamVestingInfo,
+        //     dexInfo,
+        //     feeInfo,
+        //     settingAccount,
+        //     socialLinks,
+        //     _maxLP,
+        //     _penaltyFeePercent
+        // );
     }
 
     function initialize(
@@ -298,6 +298,8 @@ contract Launchpad is Pausable {
             "launchpad: LP Added!"
         ); // pair should not be created yet. if already added then there will be error in autolisting case.
 
+        deadAddress = 0x000000000000000000000000000000000000dEaD;
+        
         // initialize data of info structure.
         maxLiquidity = _maxLP;
         icoToken = IVirtualERC20(info.icoToken);
@@ -520,7 +522,7 @@ contract Launchpad is Pausable {
     // function to set claim time for raised funds.
     // Can only be called when launchpad is finalized
     function setClaimTime(uint256 _listingTime) external onlyWhiteListUser {
-        require(state == 2 && _listingTime > 0, "launchpad: TIME");
+        require(_listingTime > 0, "launchpad: TIME");
         listingTime = _listingTime;
     }
 

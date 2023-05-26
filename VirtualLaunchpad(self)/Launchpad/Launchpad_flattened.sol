@@ -1938,7 +1938,7 @@ contract Launchpad is Pausable {
     // function to set claim time for raised funds.
     // Can only be called when launchpad is finalized
     function setClaimTime(uint256 _listingTime) external onlyWhiteListUser {
-        require(state == 2 && _listingTime > 0, "launchpad: TIME");
+        require(_listingTime > 0, "launchpad: TIME");
         listingTime = _listingTime;
     }
 
