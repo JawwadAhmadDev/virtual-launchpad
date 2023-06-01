@@ -12,9 +12,9 @@ maxLP: 50000000000000000000
 Parameters for calculate tokens: ["0x0000000000000000000000000000000000000000", "100000000000000000000" , "4000000000000000000", 0, 500, 6000, "50000000000000000000"]
                                  [FeeToken,presaleRate,hardcap,feeTokenRaisedPercent,raisedFeePercent,ListingPercent,ListingRate]
 
-VirtualLaunchpad: [https://testnet.bscscan.com/address/0xf326128955b64b06548d7e31ee249d917c0add4f#code]
+VirtualLaunchpad: [https://testnet.bscscan.com/address/0xae33cdb5997c1fc7decf73e5917f561189088d92#code]
 VirtualLock: [https://testnet.bscscan.com/address/0xaa388675726517982b36883f55d2fde1b270862f#code]
-LauchpadFactory: [https://testnet.bscscan.com/address/0xde7c1cb700ff4fa9bb2debeaf0c3188b268da33c#code]
+LauchpadFactory: [https://testnet.bscscan.com/address/0x802ba403097007af2ca30ab691596776cb4e39d1#code]
 
 
 # What is private sale in these smart contracts?
