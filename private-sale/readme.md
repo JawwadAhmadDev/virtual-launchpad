@@ -17,6 +17,10 @@ VirtualLock: [https://testnet.bscscan.com/address/0xaa388675726517982b36883f55d2
 LauchpadFactory: [https://testnet.bscscan.com/address/0xde7c1cb700ff4fa9bb2debeaf0c3188b268da33c#code]
 
 
+# What is private sale in these smart contracts?
+### Private sale is sale which will only be avaialable to the whitelist buyers only. No one else will be able to contribute in the pool.
+### Only difference between pre-sale and private-sale is that private is sub-set of pre-sale in such a way that in pre sale public users can also contribute in the pool if pool type is public but in private-sale only whitelist buyers (which are only allowed by the owner of launchpad to contribute) are allowed to contribute.
+
 
 # Powers Description
 
