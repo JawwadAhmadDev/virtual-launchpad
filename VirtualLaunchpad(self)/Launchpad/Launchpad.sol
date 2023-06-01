@@ -489,7 +489,7 @@ contract Launchpad is Pausable {
 
         joinInfo.totalInvestment = joinInfo.totalInvestment + (_amount);
 
-        uint256 newTotalSoldTokens = calculateUserTotalTokens(_amount);
+        uint256 newTotalSoldTokens = calculateUserTotalTokens(_amount); 
         totalSoldTokens = totalSoldTokens + (newTotalSoldTokens);
         joinInfo.totalTokens = joinInfo.totalTokens + (newTotalSoldTokens);
         joinInfo.refund = false; // false show that user can claim or withdraw his contribution at any time.
