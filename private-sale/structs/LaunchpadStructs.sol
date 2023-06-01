@@ -44,10 +44,6 @@ library LaunchpadStructs {
         uint256 balance; // how much tokens are in the account of launchpad smart contract
         address feeToken; 
         uint256 listingTime; // time on which user can claim tokens or time on which liquidity is added.
-        uint256 whitelistPool; // status of pool. whether it is public / whitelisted / public anti bot (0 public, 1 whitelist, 2 public anti bot)
-        // address holdingToken; // this will be used in case of anti bot mechanism
-        // uint256 holdingTokenAmount; // this address will also be used in anti-bot mechanism.
-                                // for further detail of anti-bot mechanism see the comments of launchpadInfo structure.
         
         // social links
         string logoURL;

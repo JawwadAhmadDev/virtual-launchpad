@@ -261,7 +261,7 @@ contract Launchpad is Pausable {
         poolType = info.poolType;
 
         // initialize whitelist users.
-        for(uint i; i < info.length; i++){
+        for(uint i; i < info.whiteListBuyers.length; i++){
             whiteListBuyers.add(info.whiteListBuyers[i]);
         }
 
@@ -854,7 +854,6 @@ contract Launchpad is Pausable {
             return result;
         }
         result.isOwner = isOwner;
-        result.whitelistPool = whitelistPool;
 
         // if false => true,
         result.canCancel = state == 1;
