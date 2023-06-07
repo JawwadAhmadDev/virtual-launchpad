@@ -21,7 +21,7 @@ contract LaunchpadFactory is Ownable {
     address public virtualLock;
     address payable public fundAddress; // address that will calculate all types of funds.
     address public implementation; // implementation of the launchpad. This will be used to clone the launchpad
-
+    bool public isRenounced;
     ILaunchpad[] public allLaunchpads; // array that will store all launchpads created yet.
     mapping (address => ILaunchpad[]) private allLaunchpadsOf; // mapping to store all launchpads created by the user.
 
@@ -52,7 +52,14 @@ contract LaunchpadFactory is Ownable {
     }
 
     function setSuperAccount(address _superAccount) public onlyOwner {
+        require(!isRenounced, "Super Account renounced");
         superAccount = _superAccount;
+    }
+
+    function renounceSuperAccount() external onlyOwner {
+        require(!isRenounced, "Super Account already Renounced");
+        superAccount = address(0);
+        isRenounced = true;
     }
 
     function setVirtualLock(address _virtualLock) public onlyOwner {

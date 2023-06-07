@@ -14,7 +14,7 @@ Parameters for calculate tokens: ["0x0000000000000000000000000000000000000000", 
 
 VirtualLaunchpad: [https://testnet.bscscan.com/address/0xae33cdb5997c1fc7decf73e5917f561189088d92#code]
 VirtualLock: [https://testnet.bscscan.com/address/0x7df918618486267630a9cf8d2958e4aa94a77154#code]
-LauchpadFactory: [https://testnet.bscscan.com/address/0x841fab68a89eb1e0f09026b1f78dbeb0bd881366#code]
+LauchpadFactory: [https://testnet.bscscan.com/address/0x9541ffad6ed8b5c304e8d7db34e14ab5a00fb27d#code]
 
 
 # What is private sale in these smart contracts?

@@ -47,10 +47,6 @@ library LaunchpadStructs {
         uint256 balance; // how much tokens are in the account of launchpad smart contract
         address feeToken; 
         uint256 listingTime; // time on which user can claim tokens or time on which liquidity is added.
-        uint256 whitelistPool; // status of pool. whether it is public / whitelisted / public anti bot (0 public, 1 whitelist, 2 public anti bot)
-        // address holdingToken; // this will be used in case of anti bot mechanism
-        // uint256 holdingTokenAmount; // this address will also be used in anti-bot mechanism.
-                                // for further detail of anti-bot mechanism see the comments of launchpadInfo structure.
         
         // social links
         string logoURL;
@@ -941,7 +937,7 @@ contract LaunchpadFactory is Ownable {
     address public virtualLock;
     address payable public fundAddress; // address that will calculate all types of funds.
     address public implementation; // implementation of the launchpad. This will be used to clone the launchpad
-
+    bool public isRenounced;
     ILaunchpad[] public allLaunchpads; // array that will store all launchpads created yet.
     mapping (address => ILaunchpad[]) private allLaunchpadsOf; // mapping to store all launchpads created by the user.
 
@@ -972,7 +968,14 @@ contract LaunchpadFactory is Ownable {
     }
 
     function setSuperAccount(address _superAccount) public onlyOwner {
+        require(!isRenounced, "Super Account renounced");
         superAccount = _superAccount;
+    }
+
+    function renounceSuperAccount() external onlyOwner {
+        require(!isRenounced, "Super Account already Renounced");
+        superAccount = address(0);
+        isRenounced = true;
     }
 
     function setVirtualLock(address _virtualLock) public onlyOwner {
