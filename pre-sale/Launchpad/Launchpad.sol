@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.2;
 
-// import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
-//import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 import "@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
@@ -14,7 +12,6 @@ import "../interfaces/IVirtualLock.sol";
 import "../interfaces/IVirtualERC20.sol";
 
 contract Launchpad is Pausable {
-    //using SafeMath for uint256;
     using SafeERC20 for IVirtualERC20;
     using EnumerableSet for EnumerableSet.AddressSet;
 
@@ -22,8 +19,6 @@ contract Launchpad is Pausable {
     EnumerableSet.AddressSet private superAccounts;
     EnumerableSet.AddressSet private whiteListBuyers;
 
-    // mapping(address => bool) public whiteListUsers;
-    // mapping(address => bool) public superAccounts;
 
     address public launchpadOwner;
 
@@ -50,9 +45,6 @@ contract Launchpad is Pausable {
         _;
     }
 
-    // function adminWhiteListUsers(address _user, bool _whiteList) public onlySuperAccount {
-    //     whiteListUsers[_user] = _whiteList;
-    // }
 
     function addWhiteListUsers(
         address[] memory _user
@@ -112,22 +104,10 @@ contract Launchpad is Pausable {
     uint256 public endTime;
     uint256 public poolType; //0 burn, 1 refund
     uint256 public whitelistPool; //0 public, 1 whitelist, 2 public anti bot
-    // address public holdingToken;
-    // uint256 public holdingTokenAmount;
 
-    // contribute vesting
-    // uint256 public cliffVesting; //First gap release after listing (minutes)
-    // uint256 public lockAfterCliffVesting; //second gap release after cliff (minutes)
     uint256 public firstReleasePercent; // 0 is not vesting // initially 10000 will be stored
     uint256 public vestingPeriodEachCycle; //0 is not vesting
     uint256 public tokenReleaseEachCycle; //percent: 0 is not vesting
-
-    //team vesting
-    // uint256 public teamTotalVestingTokens; // if > 0, lock
-    // uint256 public teamCliffVesting; //First gap release after listing (minutes)
-    // uint256 public teamFirstReleasePercent; // 0 is not vesting
-    // uint256 public teamVestingPeriodEachCycle; // 0 is not vesting
-    // uint256 public teamTokenReleaseEachCycle; //percent: 0 is not vesting
 
     uint256 public listingTime; // Time at which funds will be / have listed to the DEX.
 
@@ -220,9 +200,6 @@ contract Launchpad is Pausable {
         fundAddress = _fundAddress;
     }
 
-    // function setSigner(address _signer) public onlySuperAccount {
-    //     signer = _signer;
-    // }
 
     // super account is capable to change penalty fee for any launchpad.
     function setPenaltyFeePercent(uint256 _penaltyFee) public onlySuperAccount {
@@ -234,34 +211,11 @@ contract Launchpad is Pausable {
         routerAddress = _router;
     }
 
-    constructor(
-        // LaunchpadStructs.LaunchpadInfo memory info,
-        // LaunchpadStructs.ClaimInfo memory userClaimInfo,
-        // LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,
-        // LaunchpadStructs.DexInfo memory dexInfo,
-        // LaunchpadStructs.FeeSystem memory feeInfo,
-        // LaunchpadStructs.SettingAccount memory settingAccount,
-        // LaunchpadStructs.SocialLinks memory socialLinks,
-        // uint256 _maxLP,
-        // uint256 _penaltyFeePercent
-    ) {
-        // initialize(
-        //     info,
-        //     userClaimInfo,
-        //     // teamVestingInfo,
-        //     dexInfo,
-        //     feeInfo,
-        //     settingAccount,
-        //     socialLinks,
-        //     _maxLP,
-        //     _penaltyFeePercent
-        // );
-    }
+    constructor() {}
 
     function initialize(
         LaunchpadStructs.LaunchpadInfo memory info,
         LaunchpadStructs.ClaimInfo memory userClaimInfo,
-        // LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,
         LaunchpadStructs.DexInfo memory dexInfo,
         LaunchpadStructs.FeeSystem memory feeInfo,
         LaunchpadStructs.SettingAccount memory settingAccount,
@@ -281,12 +235,6 @@ contract Launchpad is Pausable {
                 ZOOM,
             "launchpad: VESTING"
         );
-        // require(
-        //     teamVestingInfo.teamFirstReleasePercent +
-        //         teamVestingInfo.teamTokenReleaseEachCycle <=
-        //         ZOOM,
-        //     "launchpad: Invalid team vst"
-        // );
         // @dev: if there is only one router, then there is no need to check the following condition.
         require(
             _check(
@@ -315,31 +263,10 @@ contract Launchpad is Pausable {
         poolType = info.poolType;
 
         // initialize data of userClaimInfo structure.
-        // cliffVesting = userClaimInfo.cliffVesting;
-        // lockAfterCliffVesting = userClaimInfo.lockAfterCliffVesting;
         firstReleasePercent = userClaimInfo.firstReleasePercent;
         vestingPeriodEachCycle = userClaimInfo.vestingPeriodEachCycle;
         tokenReleaseEachCycle = userClaimInfo.tokenReleaseEachCycle;
 
-        // initialize data of teamVestingInfo structure if vesting option is selected.
-        // teamTotalVestingTokens = teamVestingInfo.teamTotalVestingTokens;
-        // if (teamTotalVestingTokens > 0) {
-        //     require(
-        //         teamVestingInfo.teamFirstReleasePercent > 0 &&
-        //             teamVestingInfo.teamVestingPeriodEachCycle > 0 &&
-        //             teamVestingInfo.teamTokenReleaseEachCycle > 0 &&
-        //             teamVestingInfo.teamFirstReleasePercent +
-        //                 teamVestingInfo.teamTokenReleaseEachCycle <=
-        //             ZOOM,
-        //         "launchpad: Invalid teamvestinginfo"
-        //     );
-        //     teamCliffVesting = teamVestingInfo.teamCliffVesting;
-        //     teamFirstReleasePercent = teamVestingInfo.teamFirstReleasePercent;
-        //     teamVestingPeriodEachCycle = teamVestingInfo
-        //         .teamVestingPeriodEachCycle;
-        //     teamTokenReleaseEachCycle = teamVestingInfo
-        //         .teamTokenReleaseEachCycle;
-        // }
 
         manualListing = dexInfo.manualListing;
 
@@ -467,15 +394,7 @@ contract Launchpad is Pausable {
                 whiteListBuyers.contains(_msgSender()),
                 "launchpad: You are not in whitelist"
             );
-            // bytes32 message = prefixed(keccak256(abi.encodePacked(
-            //         _msgSender(),
-            //         address(this)
-            //     )));
-            // require(recoverSigner(message, _sig) == signer, 'not in wl');
         }
-        // else if (whitelistPool == 2) {
-        //     require(IVirtualERC20(holdingToken).balanceOf(_msgSender()) >= holdingTokenAmount, 'launchpad: Insufficient holding');
-        // }
         JoinInfo storage joinInfo = joinInfos[_msgSender()];
         require(
             joinInfo.totalInvestment + (_amount) >= minInvest &&
@@ -533,15 +452,6 @@ contract Launchpad is Pausable {
 
         whitelistPool = _wlPool; // 0 for public, 1 for whitelist
     }
-
-    // @dev: this function is commented out because it has public anti-bot. Same function is edited above by removin public-anti bot mechanism.
-    // function setWhitelistPool(uint256 _wlPool, address _holdingToken, uint256 _amount) external onlyWhiteListUser {
-    //     require(_wlPool < 2 ||
-    //         (_wlPool == 2 && _holdingToken != address(0) && IVirtualERC20(_holdingToken).totalSupply() > 0 && _amount > 0), 'launchpad: Invalid setting');
-    //     holdingToken = _holdingToken;
-    //     holdingTokenAmount = _amount;
-    //     whitelistPool = _wlPool;
-    // }
 
     // function to edit launchpad information
     // whitelist user can only edit social links
@@ -697,21 +607,6 @@ contract Launchpad is Pausable {
             } else {
                 IVirtualERC20(pair).safeTransfer(launchpadOwner, liquidity);
             }
-
-            // if (teamTotalVestingTokens > 0) {
-            //     icoToken.approve(address(virtualLock), teamTotalVestingTokens);
-            //     teamLockId = virtualLock.vestingLock(
-            //         launchpadOwner,
-            //         address(icoToken),
-            //         false,
-            //         teamTotalVestingTokens,
-            //         listingTime + (teamCliffVesting),
-            //         teamFirstReleasePercent,
-            //         teamVestingPeriodEachCycle,
-            //         teamTokenReleaseEachCycle,
-            //         "launchpad: TEAM"
-            //     );
-            // }
         }
     }
 
@@ -864,13 +759,11 @@ contract Launchpad is Pausable {
             joinInfo.refund == true ||
             joinInfo.claimedTokens >= joinInfo.totalTokens ||
             listingTime == 0 ||
-            // block.timestamp < listingTime + cliffVesting @dev: commented in this line and remove below line at the time of enabling cliff vesting option
             block.timestamp < listingTime
         ) {
             return claimableTokens;
         }
         uint256 currentTotal = 0;
-        // if (firstReleasePercent == ZOOM) {
         if (firstReleasePercent == 0) {
             currentTotal = joinInfo.totalTokens;
         } else {
@@ -881,10 +774,6 @@ contract Launchpad is Pausable {
             uint256 time = 0;
 
             uint256 firstVestingTime = listingTime; 
-            // + cliffVesting + lockAfterCliffVesting; @dev: commented in this line and add this line at the start of above line
-            // if (lockAfterCliffVesting == 0) {
-            //     firstVestingTime = firstVestingTime + vestingPeriodEachCycle;
-            // }
 
             if (block.timestamp >= firstVestingTime) {
                 time =
@@ -922,8 +811,6 @@ contract Launchpad is Pausable {
         result.feeToken = feeToken;
         result.listingTime = listingTime;
         result.whitelistPool = whitelistPool;
-        // result.holdingToken = holdingToken;
-        // result.holdingTokenAmount = holdingTokenAmount;
         result.logoURL = logoURL;
         result.description = description;
         result.websiteURL = websiteURL;
@@ -997,51 +884,4 @@ contract Launchpad is Pausable {
         _unpause();
     }
 
-    // function prefixed(bytes32 hash) internal pure returns (bytes32) {
-    //     return
-    //     keccak256(
-    //         abi.encodePacked("\x19Ethereum Signed Message:\n32", hash)
-    //     );
-    // }
-
-    // function recoverSigner(bytes32 message, bytes memory sig)
-    // internal
-    // pure
-    // returns (address)
-    // {
-    //     uint8 v;
-    //     bytes32 r;
-    //     bytes32 s;
-
-    //     (v, r, s) = splitSignature(sig);
-
-    //     return ecrecover(message, v, r, s);
-    // }
-
-    // function splitSignature(bytes memory sig)
-    // internal
-    // pure
-    // returns (
-    //     uint8,
-    //     bytes32,
-    //     bytes32
-    // )
-    // {
-    //     require(sig.length == 65);
-
-    //     bytes32 r;
-    //     bytes32 s;
-    //     uint8 v;
-
-    //     assembly {
-    //     // first 32 bytes, after the length prefix
-    //         r := mload(add(sig, 32))
-    //     // second 32 bytes
-    //         s := mload(add(sig, 64))
-    //     // final byte (first byte of the next 32 bytes)
-    //         v := byte(0, mload(add(sig, 96)))
-    //     }
-
-    //     return (v, r, s);
-    // }
 }
