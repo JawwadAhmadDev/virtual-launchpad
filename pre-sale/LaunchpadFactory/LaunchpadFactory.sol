@@ -17,11 +17,11 @@ contract LaunchpadFactory is Ownable {
 
     uint256 public flatFee; // fee that will be calculated on each launchpad creation
     uint256 public penaltyFeePercent = 1000; // 10% // penalty that will be calculated on each emergency withdraw or cancellation the launchpad.
-    // address public signer;
     address public superAccount;
     address public virtualLock;
     address payable public fundAddress; // address that will calculate all types of funds.
     address public implementation; // implementation of the launchpad. This will be used to clone the launchpad
+    bool public isRenounced;
 
     ILaunchpad[] public allLaunchpads; // array that will store all launchpads created yet.
     mapping (address => ILaunchpad[]) private allLaunchpadsOf; // mapping to store all launchpads created by the user.
@@ -29,13 +29,11 @@ contract LaunchpadFactory is Ownable {
     event NewLaunchpad(address indexed launchpad);
 
     constructor(
-        // address _signer,
         address _superAccount,
         address _virtualLock,
         address payable _fundAddress,
         address _implementation
     ) {
-        // require(_signer != address(0) && _signer != address(this), "signer");
         require(
             _virtualLock != address(0) && _virtualLock != address(this),
             "LauchpadFactory: virtualLock"
@@ -48,49 +46,45 @@ contract LaunchpadFactory is Ownable {
             _fundAddress != address(0) && _fundAddress != address(this),
             "LauchpadFactory: fundAddress"
         );
-        // signer = _signer;
         superAccount = _superAccount;
         fundAddress = _fundAddress;
         virtualLock = _virtualLock;
         implementation = _implementation;
     }
 
-    // function setSigner(address _signer) public onlyOwner {
-    //     signer = _signer;
-    // }
-
-
-    function setSuperAccount(address _superAccount) public onlyOwner {
+    // super account is only set when super account is not renounced.
+    function setSuperAccount(address _superAccount) external onlyOwner {
+        require(!isRenounced, "Super Account Renounced");
         superAccount = _superAccount;
     }
 
-    function setVirtualLock(address _virtualLock) public onlyOwner {
+    // function to renounce super account.
+    // once super account is renounced, then it will not be set again.
+    function renounceSuperAccount() external onlyOwner {
+        require(!isRenounced, "Super Account already renounced");
+        superAccount = address(0);
+        isRenounced = true;
+    }
+
+    function setVirtualLock(address _virtualLock) external onlyOwner {
         virtualLock = _virtualLock;
     }
 
-    function setFundAddress(address payable _fundAddress) public onlyOwner {
+    function setFundAddress(address payable _fundAddress) external onlyOwner {
         fundAddress = _fundAddress;
     }
 
-    function setFlatFee(uint256 _flatFee) public onlyOwner {
+    function setFlatFee(uint256 _flatFee) external onlyOwner {
         flatFee = _flatFee;
     }
 
-    function setPenalyFeePercent(uint256 _penaltyFeePercent) public onlyOwner {
+    function setPenalyFeePercent(uint256 _penaltyFeePercent) external onlyOwner {
         penaltyFeePercent = (_penaltyFeePercent) * 100; // due to ZOOM constant
     }
 
-    function setImplementations(address _implementation) public onlyOwner {
+    function setImplementations(address _implementation) external onlyOwner {
         implementation = _implementation;
     }
-
-    // if deployer send BNBs more than decided fee, then excessive fee will be returned back to the deployer.
-    // function refundExcessiveFee() internal {
-    //     uint256 refund = msg.value - (flatFee);
-    //     if (refund > 0) {
-    //         payable(msg.sender).sendValue(refund);
-    //     }
-    // }
 
     // this function is used to calcluate how many tokens deployer should have to approve to Deploy Launchpad to create a new launchpad.
     function calculateTokens(
@@ -119,28 +113,21 @@ contract LaunchpadFactory is Ownable {
     function deployLaunchpad(
         LaunchpadStructs.LaunchpadInfo memory info,
         LaunchpadStructs.ClaimInfo memory claimInfo,
-        // LaunchpadStructs.TeamVestingInfo memory teamVestingInfo,
         LaunchpadStructs.DexInfo memory dexInfo,
         LaunchpadStructs.FeeSystem memory feeInfo,
         LaunchpadStructs.SocialLinks memory socialLinks
     ) external payable {
         require(
-            // signer != address(0) &&
                 superAccount != address(0) &&
                 fundAddress != address(0),
             "LauchpadFactory: Can not create launchpad now!"
         );
         require(msg.value >= flatFee, "LauchpadFactory: Not enough fee!");
 
-        // refund excessive fee paid by the user
-        // if(msg.value > flatFee){
-        //     refundExcessiveFee();
-        // }
 
         LaunchpadStructs.SettingAccount memory settingAccount = LaunchpadStructs
             .SettingAccount(
                 _msgSender(),
-                // signer,
                 superAccount,
                 payable(fundAddress),
                 virtualLock
@@ -174,7 +161,6 @@ contract LaunchpadFactory is Ownable {
         ILaunchpad(launchpad).initialize(
             info,
             claimInfo,
-            // teamVestingInfo,
             dexInfo,
             feeInfo,
             settingAccount,
@@ -182,7 +168,6 @@ contract LaunchpadFactory is Ownable {
             maxLP,
             penaltyFeePercent
         );
-        // LaunchpadV2 launchpad = new LaunchpadV2(info, claimInfo, teamVestingInfo, dexInfo, feeInfo, settingAccount, maxLP);
 
         if (msg.value > 0) {
             payable(fundAddress).transfer(msg.value);

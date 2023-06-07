@@ -14,7 +14,7 @@ Parameters for calculate tokens: ["0x0000000000000000000000000000000000000000", 
 
 VirtualLaunchpad: [https://testnet.bscscan.com/address/0xf326128955b64b06548d7e31ee249d917c0add4f#code]
 VirtualLock: [https://testnet.bscscan.com/address/0x7df918618486267630a9cf8d2958e4aa94a77154#code]
-LauchpadFactory: [https://testnet.bscscan.com/address/0x7c4a1baa278fc3a51f96ce56aa2cdfe8ffe2f07f#code]
+LauchpadFactory: [https://testnet.bscscan.com/address/0x638384f891f2cc082aef99f4924d805541b4c60b#code]
 
 
 
